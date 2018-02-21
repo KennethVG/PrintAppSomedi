@@ -6,8 +6,6 @@ import be.somedi.printen.printapp.service.ExternalCaregiverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class ExternalCaregiverServiceImpl implements ExternalCaregiverService {
 
@@ -19,20 +17,10 @@ public class ExternalCaregiverServiceImpl implements ExternalCaregiverService {
     }
 
     @Override
-    public List<ExternalCaregiver> findAll() {
-        return repository.findAll();
-    }
-
-    @Override
     public ExternalCaregiver findByMnemonic(String mnemonic) {
         if (mnemonic.length() == 5) {
             return repository.findFirstByExternalID(mnemonic);
         }
         return null;
-    }
-
-    @Override
-    public ExternalCaregiver findById(Long id) {
-        return repository.findById(id);
     }
 }
