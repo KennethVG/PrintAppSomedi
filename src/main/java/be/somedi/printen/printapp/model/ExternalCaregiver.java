@@ -11,18 +11,8 @@ public class ExternalCaregiver {
     private Long id;
 
     private String externalID;
-    private String copyToExternalID;
 
     private Boolean printProtocols;
-
-
-    public String getCopyToExternalID() {
-        return copyToExternalID;
-    }
-
-    public void setCopyToExternalID(String copyToExternalID) {
-        this.copyToExternalID = copyToExternalID;
-    }
 
     public Long getId() {
         return id;

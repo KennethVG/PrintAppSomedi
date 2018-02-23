@@ -13,17 +13,17 @@ public class TxtUtilTest {
     public void testIsPathToPrint() throws IOException {
         ClassPathResource resNotToPrint = new ClassPathResource("vulAan.txt");
         Path path = resNotToPrint.getFile().toPath();
-        boolean toPrint = TxtUtil.isPathToPrint(path);
+        boolean toPrint = TxtUtil.isPathWithLetterNotToPrint(path);
         Assert.assertTrue(toPrint);
 
         resNotToPrint= new ClassPathResource("geenVerslag.txt");
         path = resNotToPrint.getFile().toPath();
-        toPrint = TxtUtil.isPathToPrint(path);
+        toPrint = TxtUtil.isPathWithLetterNotToPrint(path);
         Assert.assertTrue(toPrint);
 
         ClassPathResource resToPrint = new ClassPathResource("print.txt");
         path = resToPrint.getFile().toPath();
-        toPrint = TxtUtil.isPathToPrint(path);
+        toPrint = TxtUtil.isPathWithLetterNotToPrint(path);
         Assert.assertFalse(toPrint);
     }
 }
