@@ -11,8 +11,6 @@ import java.util.stream.Stream;
 
 public class TxtUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(TxtUtil.class);
-
     public static boolean isPathWithLetterNotToPrint(Path pathToTxt) {
 
         boolean toPrint = false;
@@ -21,6 +19,7 @@ public class TxtUtil {
 
             String lineWithConsultId = bufferedReader.lines().filter(line -> line.trim().toUpperCase().startsWith("#PR")).findFirst().orElseThrow(RuntimeException::new);
             if(lineWithConsultId.length() > 15){
+                System.out.println("#PR is groter dan 15 --> NIET PRINTEN!");
                 return true;
             }
 
@@ -30,10 +29,13 @@ public class TxtUtil {
                 String finalCurrentLine = currentLine.trim();
                 toPrint = Stream.of(DeleteItems.values()).anyMatch(deleteItems -> finalCurrentLine.contains
                         (deleteItems.getText()) || deleteItems.getText().equalsIgnoreCase(finalCurrentLine));
-                if(toPrint) return true;
+                if(toPrint){
+                    System.out.println("Print bevat vul_aan of andere ... --> NIET PRINTEN!");
+                    return true;
+                }
             }
         } catch (IOException e) {
-           logger.error(e.getMessage());
+            System.out.println(e.getMessage());
         }
 
         return toPrint;

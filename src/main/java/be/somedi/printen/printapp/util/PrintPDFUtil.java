@@ -5,8 +5,6 @@ import be.somedi.printen.printapp.service.ExternalCaregiverService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,8 +15,6 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class PrintPDFUtil {
@@ -30,8 +26,6 @@ public class PrintPDFUtil {
     @Value("${path-error}")
     private Path PATH_TO_ERROR;
 
-    private static final Logger logger = LoggerFactory.getLogger(PrintPDFUtil.class);
-
     private static final int MNEMONIC_LENGTH = 5;
 
     private final ExternalCaregiverService service;
@@ -42,39 +36,66 @@ public class PrintPDFUtil {
     }
 
     public void printAllPDFs() {
+        System.out.println("Path to read= " + PATH_TO_READ);
 
-        logger.warn(PATH_TO_READ.toString());
+        // Directory één keer al volledig nakijken en printjobs uitvoeren
+       checkDirectoryAndRunJob();
 
+        // Telkens er een nieuwe file in directory komt printjob uitvoeren ********/
+        watchDirectory();
+    }
+
+    private void checkDirectoryAndRunJob(){
         try {
-            while (true) {
-                WatchService watchService = PATH_TO_READ.getFileSystem().newWatchService();
-                PATH_TO_READ.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+           Files.list(PATH_TO_READ)
+                    .filter(Files::isRegularFile)
+                    .filter(path -> StringUtils.endsWith(path.toString(), ".txt"))
+                    .filter(path -> {
+                        if (isPrintNeeded(path))
+                            return makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + path.getFileName()));
+                        else
+                            return makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + path.getFileName()));
+                    }).count();
 
-                List<Path> paths = Files.list(PATH_TO_READ).filter(Files::isRegularFile).collect(Collectors.toList
-                        ());
-
-                for (Path path : paths) {
-                    if (StringUtils.endsWith(path.toString(), ".txt")) {
-                        if(printIfNeeded(path)){
-                            if (makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + path.getFileName()))) {
-                                logger.error("Just Backup: Could not delete: " + path + " --> Closing application!");
-                                watchService.close();
-                                throw new IOException("Close application");
-                            }
-                        }  else if(makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + path.getFileName()))) {
-                            logger.error("Backup to delete: Could not delete: " + path + " --> Closing application!");
-                            watchService.close();
-                            throw new IOException("Stop application");
-                        }
-                    }
-                }
-            }
-        } catch (IOException | PrinterException e) {
-            logger.error(e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private boolean printIfNeeded(Path path) throws IOException, PrinterException {
+    private void watchDirectory(){
+        try (final WatchService watchService = PATH_TO_READ.getFileSystem().newWatchService()) {
+            PATH_TO_READ.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+
+            while (true) {
+                final WatchKey watchKey = watchService.take();
+
+                for (WatchEvent<?> event : watchKey.pollEvents()) {
+                    final Path fileName = (Path) event.context();
+                    System.out.println("Path changed: " + fileName);
+
+                    final Path path = Paths.get(PATH_TO_READ + "\\" + fileName);
+
+                    if (Files.isRegularFile(path) && StringUtils.endsWith(path.toString(), ".txt")) {
+                        System.out.println("Regular file, end with .txt");
+                        if (isPrintNeeded(path))
+                            makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + fileName));
+                        else
+                            makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + fileName));
+                    }
+                }
+
+                if (!watchKey.reset()) {
+                    System.out.println("Key has been unregistered");
+                }
+            }
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private boolean isPrintNeeded(Path path) {
         String fileName = FilenameUtils.getBaseName(path.toString());
         String mnemonic = StringUtils.right(FilenameUtils.removeExtension(fileName), MNEMONIC_LENGTH);
         ExternalCaregiver caregiverToPrint = service.findByMnemonic(mnemonic);
@@ -82,43 +103,55 @@ public class PrintPDFUtil {
         Boolean toPrint = null != caregiverToPrint && null != caregiverToPrint.getPrintProtocols();
 
         if (toPrint && caregiverToPrint.getPrintProtocols()) {
-            logger.warn("Caregiver to print: " + caregiverToPrint.toString());
+            System.out.println("Caregiver to print: " + caregiverToPrint.toString());
             String fileToPrint = fileName.replace("MSE", "PDF");
 
             if (!TxtUtil.isPathWithLetterNotToPrint(path)) {
-                printPDFFromPath(Paths.get(PATH_TO_READ + "\\" + fileToPrint + ".pdf"));
-                logger.warn("Succesfully printed: " + fileToPrint);
-                return true;
+                return isPrinted(Paths.get(PATH_TO_READ + "\\" + fileToPrint + ".pdf"));
             } else {
-                logger.warn("This letter contains vul_aan/ mag_weg ... " + path.getFileName());
+                System.out.println("This letter contains vul_aan/ mag_weg ... " + path.getFileName());
             }
         }
         return false;
     }
 
-    private void printPDFFromPath(Path path) throws IOException, PrinterException {
-        if (Files.exists(path)) {
-            logger.warn("Printing: " + path.getFileName());
-            PrintService myPrintService = PrintServiceLookup.lookupDefaultPrintService();
-            PrinterJob job = PrinterJob.getPrinterJob();
-            job.setPrintService(myPrintService);
+    private boolean isPrinted(Path path) {
+        try {
+            if (Files.exists(path)) {
+                System.out.println("Printing: " + path.getFileName());
+                PrintService myPrintService = PrintServiceLookup.lookupDefaultPrintService();
+                PrinterJob job = PrinterJob.getPrinterJob();
+                job.setPrintService(myPrintService);
 
-            PDDocument document = PDDocument.load(path.toFile());
-            document.silentPrint(job);
-            document.close();
-        } else {
-            logger.warn("PATH does not exist: " + path);
+                PDDocument document = PDDocument.load(path.toFile());
+                document.silentPrint(job);
+                document.close();
+                System.out.println("Succesfully printed: " + path.getFileName());
+                return true;
+            }
+        } catch (IOException | PrinterException e) {
+            System.out.println(e.getMessage());
         }
+        System.out.println("PDF NOT FOUND: " + path);
+        return false;
+
     }
 
 
-    private boolean makeBackUpAndDelete(Path fromPath, Path toPath) throws IOException {
+    private boolean makeBackUpAndDelete(Path fromPath, Path toPath) {
         if (Files.exists(fromPath)) {
-            logger.warn("Make backup and delete: " + fromPath.getFileName() + " " + toPath.getFileName());
-            Files.copy(fromPath, toPath, StandardCopyOption.REPLACE_EXISTING);
-            return !fromPath.toFile().delete();
+            System.out.println("Make backup: from " + fromPath + " to " + toPath);
+            try {
+                Files.copy(fromPath, toPath, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (fromPath.toFile().delete()) {
+                System.out.println("Deleted: " + fromPath);
+                return false;
+            }
         }
-        logger.warn("PATH does not exist: " + fromPath);
+        System.out.println("PATH does not exist: " + fromPath);
 
         return true;
     }

@@ -3,7 +3,7 @@ package be.somedi.printen.printapp.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "${db-name}")
+@Table(name = "externalcaregiver")
 public class ExternalCaregiver {
 
     @Id
