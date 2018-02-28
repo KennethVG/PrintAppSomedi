@@ -30,19 +30,30 @@ public class PrintPDFUtil {
 
     private final ExternalCaregiverService service;
 
+    private WatchService watchService;
+    public static String resultToShow;
+
     @Autowired
     public PrintPDFUtil(ExternalCaregiverService service) {
         this.service = service;
     }
 
-    public void printAllPDFs() {
+    public void startPrintJob() {
         System.out.println("Path to read= " + PATH_TO_READ);
 
         // Directory één keer al volledig nakijken en printjobs uitvoeren
        checkDirectoryAndRunJob();
 
-        // Telkens er een nieuwe file in directory komt printjob uitvoeren ********/
+        // Telkens er een nieuwe file in directory komt printjob uitvoeren
         watchDirectory();
+    }
+
+    public void stopPrintJob(){
+        try {
+            watchService.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void checkDirectoryAndRunJob(){
@@ -63,7 +74,8 @@ public class PrintPDFUtil {
     }
 
     private void watchDirectory(){
-        try (final WatchService watchService = PATH_TO_READ.getFileSystem().newWatchService()) {
+        try  {
+            watchService = PATH_TO_READ.getFileSystem().newWatchService();
             PATH_TO_READ.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
 
             while (true) {
@@ -90,8 +102,7 @@ public class PrintPDFUtil {
             }
 
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -134,7 +145,6 @@ public class PrintPDFUtil {
         }
         System.out.println("PDF NOT FOUND: " + path);
         return false;
-
     }
 
 

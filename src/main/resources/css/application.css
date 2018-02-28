@@ -1,0 +1,25 @@
+.background {
+    -fx-background-color: #f1fbfb;
+}
+
+.button {
+    -fx-background-color: #1D494A;
+    -fx-font-family: "Calibri Light", sans-serif;
+    -fx-text-fill: #FFFFFF;
+    -fx-cursor: hand;
+    -fx-font-size: 1.2em;
+}
+
+.button:hover {
+    -fx-background-color: #d8d8d8;
+    -fx-text-fill: #000000;
+}
+
+.label {
+    -fx-font-size: 1em;
+}
+
+#title {
+    -fx-font-size: 1.6em;
+    -fx-color-label-visible: #46c5c9;
+}

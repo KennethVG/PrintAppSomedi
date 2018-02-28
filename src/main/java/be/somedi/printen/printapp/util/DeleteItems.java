@@ -6,7 +6,6 @@ public enum DeleteItems {
     VRAAG_SPECIALIST("na vraag aan de specialist geen verslag beschikbaar"), PN("P.N."), BIJLAGE("Bijlage dossier " +
             "intern"), BRIEF_MAG_WEG("Deze brief mag weg"), VUL_AAN("vul_aan");
 
-
     private String text;
 
     DeleteItems(String text) {

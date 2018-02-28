@@ -12,6 +12,10 @@ public class ExternalCaregiver {
 
     private String externalID;
 
+    private String firstName;
+
+    private String lastName;
+
     private Boolean printProtocols;
 
     public Long getId() {
@@ -30,6 +34,22 @@ public class ExternalCaregiver {
         this.externalID = externalID;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
     public Boolean getPrintProtocols() {
         return printProtocols;
     }
@@ -43,6 +63,8 @@ public class ExternalCaregiver {
         return "ExternalCaregiver{" +
                 "id=" + id +
                 ", externalID='" + externalID + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", printProtocols=" + printProtocols +
                 '}';
     }
