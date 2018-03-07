@@ -25,6 +25,7 @@ public class ExternalCaregiverViewController {
 
     private ExecutorService executorService;
     private ExternalCaregiver caregiverToUpdate;
+    private List<String> listOfPrintValues;
 
     @FXML
     private Label lblJobResult;
@@ -49,6 +50,12 @@ public class ExternalCaregiverViewController {
     public ExternalCaregiverViewController(ExternalCaregiverService service, PrintPDFUtil printPDF) {
         this.service = service;
         this.printPDF = printPDF;
+    }
+
+    @FXML
+    public void initialize(){
+        listOfPrintValues = Arrays.stream(PrintProtocols.values()).map(pp-> pp.name().toLowerCase()).collect(Collectors.toList());
+        cbPrintProtocols.getItems().addAll(listOfPrintValues);
     }
 
     @FXML
@@ -82,9 +89,7 @@ public class ExternalCaregiverViewController {
             updateDokter.setVisible(true);
             lblInfo.setVisible(true);
 
-            List<String> list = Arrays.stream(PrintProtocols.values()).map(pp-> pp.name().toLowerCase()).collect(Collectors.toList());
-            cbPrintProtocols.getItems().addAll(list);
-            cbPrintProtocols.setValue(caregiverToUpdate.getPrintProtocols() ? list.get(0) : list.get(1));
+            cbPrintProtocols.setValue(caregiverToUpdate.getPrintProtocols() ? listOfPrintValues.get(0) : listOfPrintValues.get(1));
         } else {
             lblSearchResult.setText("Deze mnemonic bestaat niet in de Cliniconnect database");
         }
