@@ -11,11 +11,13 @@ public class ExternalCaregiver {
     private Long id;
 
     private String externalID;
-
     private String firstName;
-
     private String lastName;
-
+    private String nihii;
+    private String zip;
+    private String city;
+    private String streetWithNumber;
+    private String phone;
     private Boolean printProtocols;
 
     public Long getId() {
@@ -50,6 +52,46 @@ public class ExternalCaregiver {
         this.lastName = lastName;
     }
 
+    public String getNihii() {
+        return nihii;
+    }
+
+    public void setNihii(String nihii) {
+        this.nihii = nihii;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getStreetWithNumber() {
+        return streetWithNumber;
+    }
+
+    public void setStreetWithNumber(String streetWithNumber) {
+        this.streetWithNumber = streetWithNumber;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public Boolean getPrintProtocols() {
         return printProtocols;
     }
@@ -65,6 +107,11 @@ public class ExternalCaregiver {
                 ", externalID='" + externalID + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
+                ", nihii='" + nihii + '\'' +
+                ", zip='" + zip + '\'' +
+                ", city='" + city + '\'' +
+                ", streetWithNumber='" + streetWithNumber + '\'' +
+                ", phone='" + phone + '\'' +
                 ", printProtocols=" + printProtocols +
                 '}';
     }

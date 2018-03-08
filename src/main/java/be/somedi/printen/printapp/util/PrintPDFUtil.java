@@ -26,12 +26,9 @@ public class PrintPDFUtil {
     @Value("${path-error}")
     private Path PATH_TO_ERROR;
 
-    private static final int MNEMONIC_LENGTH = 5;
-
     private final ExternalCaregiverService service;
 
     private WatchService watchService;
-    public static String resultToShow;
 
     @Autowired
     public PrintPDFUtil(ExternalCaregiverService service) {
@@ -107,15 +104,13 @@ public class PrintPDFUtil {
     }
 
     private boolean isPrintNeeded(Path path) {
-        String fileName = FilenameUtils.getBaseName(path.toString());
-        String mnemonic = StringUtils.right(FilenameUtils.removeExtension(fileName), MNEMONIC_LENGTH);
-        ExternalCaregiver caregiverToPrint = service.findByMnemonic(mnemonic);
+        ExternalCaregiver caregiverToPrint = service.findByMnemonic(TxtUtil.getMnemnonic(path));
 
         Boolean toPrint = null != caregiverToPrint && null != caregiverToPrint.getPrintProtocols();
 
         if (toPrint && caregiverToPrint.getPrintProtocols()) {
             System.out.println("Caregiver to print: " + caregiverToPrint.toString());
-            String fileToPrint = fileName.replace("MSE", "PDF");
+            String fileToPrint = FilenameUtils.getBaseName(path.toString()).replace("MSE", "PDF");
 
             if (!TxtUtil.isPathWithLetterNotToPrint(path)) {
                 return isPrinted(Paths.get(PATH_TO_READ + "\\" + fileToPrint + ".pdf"));
