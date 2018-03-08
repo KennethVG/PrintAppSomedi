@@ -54,7 +54,19 @@ public class MedidocTest {
     @Test
     public void testFormatDate() {
         LocalDateTime ldt = LocalDateTime.of(2018, Month.APRIL, 8, 8, 22);
-        assertEquals("1804080822", Medidoc.formatDate(ldt));
+        assertEquals("1804080822", Medidoc.formatDateAndTime(ldt));
+
+        String date = "30071962";
+        String result = Medidoc.formatDate(date);
+        assertEquals("620730", result);
+    }
+
+    @Test
+    public void testFormatGender() {
+        String female = "V-198000";
+        String male = "M151581";
+        assertEquals("X", Medidoc.formatGender(female));
+        assertEquals("Y", Medidoc.formatGender(male));
     }
 
     @Test
@@ -70,11 +82,18 @@ public class MedidocTest {
                 "2220          Heist-op-den-Berg\n" +
                 "015/249174\n" +
                 "\n" +
-                Medidoc.formatDate(ldt) +
+                Medidoc.formatDateAndTime(ldt) +
                 "\n" +
                 "1/06979/12/414\n" +
                 "Vantrappen              Greet";
         assertEquals(expected, heading);
+
+//        String headingLetter = medidoc.buildHeadingLetter(path);
+//        System.out.println(headingLetter);
+//
+//        String expectedHeadingLetter= "";
+
+
 
     }
 }

@@ -12,8 +12,19 @@ public class Person {
 
     private String rrn;
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 
+    public String getRrn() {
+        return rrn;
+    }
 
-
+    public void setRrn(String rrn) {
+        this.rrn = rrn;
+    }
 }

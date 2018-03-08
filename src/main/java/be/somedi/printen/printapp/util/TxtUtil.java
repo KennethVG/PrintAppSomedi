@@ -15,9 +15,19 @@ public class TxtUtil {
 
     private static final String PR = "#PR";
     private static final String UA = "#UA";
+    private static final String PC = "#PC";
+    private static final String PN = "#PN";
+    private static final String PV = "#PV";
+    private static final String PS = "#PS";
+    private static final String PP = "#PP";
+    private static final String PA = "#PA";
+    private static final String PD = "#PD";
+    private static final String UD = "#UD";
+
     private static final String BETREFT = "Betreft";
     private static final String MET_VRIENDELIJKE_GROETEN = "Met vriendelijke groeten";
     private static final int MNEMONIC_LENGTH = 5;
+    private static final int LINE_LENGTH = 75;
 
     public static boolean isPathWithLetterNotToPrint(Path pathToTxt) {
 
@@ -68,7 +78,14 @@ public class TxtUtil {
 
             if (startIndex != 0 && endIndex != 0) {
                 for (int i = startIndex; i <= endIndex; i++) {
-                    result.append(allLines.get(i)).append("\n");
+                    String oneLine = allLines.get(i);
+                    if(oneLine.length()>LINE_LENGTH){
+                        String first75 = StringUtils.left(oneLine, LINE_LENGTH);
+                        int index = StringUtils.lastIndexOf(first75, " ");
+                        result.append(StringUtils.substring(first75, 0, index)).append("\n").append(StringUtils.substring(oneLine, index)).append("\n");
+                    } else {
+                        result.append(oneLine).append("\n");
+                    }
                 }
             }
         } catch (IOException e) {
@@ -78,22 +95,62 @@ public class TxtUtil {
     }
 
     public static String getMnemonicAfterUA(Path pathToTxt) {
-        String result = "";
-
-        try {
-            String lineWithUA = Files.lines(pathToTxt).filter(line -> line.trim().toUpperCase().startsWith(UA))
-                    .findFirst()
-                    .orElseThrow(RuntimeException::new);
-            result = StringUtils.right(lineWithUA.trim(), MNEMONIC_LENGTH);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
+        return getTextAfterKeyword(UA, pathToTxt);
     }
+
+    public static String getExternalIdAfterPC(Path pathToTxt) {
+        return getTextAfterKeyword(PC, pathToTxt);
+    }
+
+    public static String getNameAfterPN(Path pathToTxt) {
+        return getTextAfterKeyword(PN, pathToTxt);
+    }
+
+    public static String getFirstNameAfterPV(Path pathToTxt) {
+        return getTextAfterKeyword(PV, pathToTxt);
+    }
+
+    public static String getStreetWithNumberAfterPS(Path pathToTxt) {
+        return getTextAfterKeyword(PS, pathToTxt);
+    }
+
+    public static String getZipCodeAfterPP(Path pathToTxt) {
+        return getTextAfterKeyword(PP, pathToTxt);
+    }
+
+    public static String getCityAfterPA(Path pathToTxt) {
+        return getTextAfterKeyword(PA, pathToTxt);
+    }
+
+    public static String getBirthDateAtferPD(Path pathToTxt) {
+        return getTextAfterKeyword(PD, pathToTxt);
+    }
+
+    public static String getDateOfResearchAfterUD(Path pathToTxt) {
+        return getTextAfterKeyword(UD, pathToTxt);
+    }
+
+    public static String getRefNrAfterPR(Path pathToTxt){
+        return getTextAfterKeyword(PR, pathToTxt);
+    }
+
 
     public static String getMnemnonic(Path path) {
         String fileName = FilenameUtils.getBaseName(path.toString());
         return StringUtils.right(FilenameUtils.removeExtension(fileName), MNEMONIC_LENGTH);
+    }
+
+    private static String getTextAfterKeyword(String keyword, Path pathToTxt) {
+        String result = "";
+        try {
+            String specificLine = Files.lines(pathToTxt).filter(line -> line.trim().toUpperCase().startsWith(keyword))
+                    .findFirst()
+                    .orElseThrow(RuntimeException::new);
+            result = StringUtils.substring(specificLine, 3).trim();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
 }

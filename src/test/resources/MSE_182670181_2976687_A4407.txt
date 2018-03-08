@@ -32,7 +32,9 @@ Kerkhofstraat 43 te 2220 Heist-op-den-Berg. 
  Consultatie : 04/01/2018 met referentienr : 182670181
 
 * ANAMNESE:
- klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch onderzoek
+ klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.
+ klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.
+ klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.
 
  * klinisch onderzoekklinisch onderzoek
 
