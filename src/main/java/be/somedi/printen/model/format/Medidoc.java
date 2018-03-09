@@ -8,9 +8,13 @@ import be.somedi.printen.service.PatientService;
 import be.somedi.printen.service.PersonService;
 import be.somedi.printen.util.TxtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
 import static be.somedi.printen.util.FormatUtil.*;
@@ -23,6 +27,11 @@ public class Medidoc {
     private final PersonService personService;
 
     private ExternalCaregiver externalCaregiver;
+    private String mnemonic;
+    private String refNr;
+
+    @Value("${path-um}")
+    private Path PATH_TO_UM;
 
     @Autowired
     public Medidoc(ExternalCaregiverService externalCaregiverService, PatientService patientService, PersonService
@@ -30,6 +39,17 @@ public class Medidoc {
         this.externalCaregiverService = externalCaregiverService;
         this.patientService = patientService;
         this.personService = personService;
+    }
+
+    public Path makeFile(Path pathToTxt) {
+        String fullDocument = buildDocument(pathToTxt);
+        Path result = null;
+        try {
+            result = Files.write(Paths.get(PATH_TO_UM + "/HEC_" + mnemonic + "R_" + refNr + "R.REP"), fullDocument.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public String buildDocument(Path pathToTxt) {
@@ -40,14 +60,15 @@ public class Medidoc {
         long count = countNumberOfLines(heading) + countNumberOfLines(headingLetter) + countNumberOfLines(body);
 
         result.append(heading).append("\n").append(headingLetter).append(body).append("\n").append("#/").append(count);
-
         return result.toString();
+
     }
 
     public String buildHeading(Path pathToTxt) {
 
         StringBuilder result = new StringBuilder();
-        externalCaregiver = externalCaregiverService.findByMnemonic(TxtUtil.getMnemnonic(pathToTxt));
+        mnemonic = TxtUtil.getMnemnonic(pathToTxt);
+        externalCaregiver = externalCaregiverService.findByMnemonic(mnemonic);
         ExternalCaregiver caregiverToSendLetter = externalCaregiverService.findByMnemonic(TxtUtil.getMnemonicAfterUA
                 (pathToTxt));
 
@@ -104,7 +125,8 @@ public class Medidoc {
         result.append(formatDate(TxtUtil.getDateOfResearchAfterUD(pathToTxt))).append("\n");
 
         //LINE6: RefNr (14 karakters)
-        result.append(formatStringWithBlanks(TxtUtil.getRefNrAfterPR(pathToTxt), 14)).append("\n").append("\n");
+        refNr = TxtUtil.getRefNrAfterPR(pathToTxt);
+        result.append(formatStringWithBlanks(refNr, 14)).append("\n").append("\n");
 
         return result.toString();
     }

@@ -1,4 +1,4 @@
-package be.somedi.printen.javafx;
+package be.somedi.printen.model;
 
 public enum PrintProtocols {
 

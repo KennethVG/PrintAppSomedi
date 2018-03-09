@@ -1,8 +1,9 @@
 package be.somedi.printen.javafx;
 
 import be.somedi.printen.entity.ExternalCaregiver;
+import be.somedi.printen.model.PrintProtocols;
 import be.somedi.printen.service.ExternalCaregiverService;
-import be.somedi.printen.model.print.PrintPDFUtil;
+import be.somedi.printen.model.job.PrintJob;
 import ch.qos.logback.core.util.ExecutorServiceUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 public class ExternalCaregiverViewController {
 
     private final ExternalCaregiverService service;
-    private final PrintPDFUtil printPDF;
+    private final PrintJob printPDF;
 
     private ExecutorService executorService;
     private ExternalCaregiver caregiverToUpdate;
@@ -47,7 +48,7 @@ public class ExternalCaregiverViewController {
 
 
     @Autowired
-    public ExternalCaregiverViewController(ExternalCaregiverService service, PrintPDFUtil printPDF) {
+    public ExternalCaregiverViewController(ExternalCaregiverService service, PrintJob printPDF) {
         this.service = service;
         this.printPDF = printPDF;
     }
