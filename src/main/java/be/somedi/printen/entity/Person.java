@@ -16,15 +16,7 @@ public class Person {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getInss() {
         return inss;
-    }
-
-    public void setInss(String inss) {
-        this.inss = inss;
     }
 }

@@ -19,23 +19,11 @@ public class Patient {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getExternalId() {
         return externalId;
     }
 
-    public void setExternalId(String externalId) {
-        this.externalId = externalId;
-    }
-
     public int getPersonId() {
         return personId;
-    }
-
-    public void setPersonId(int personId) {
-        this.personId = personId;
     }
 }
