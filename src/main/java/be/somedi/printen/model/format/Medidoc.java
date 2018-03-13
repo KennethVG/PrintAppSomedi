@@ -7,6 +7,7 @@ import be.somedi.printen.service.ExternalCaregiverService;
 import be.somedi.printen.service.PatientService;
 import be.somedi.printen.service.PersonService;
 import be.somedi.printen.util.TxtUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,8 +28,11 @@ public class Medidoc {
     private final PersonService personService;
 
     private ExternalCaregiver externalCaregiver;
+    private ExternalCaregiver caregiverToSendLetter;
     private String mnemonic;
     private String refNr;
+
+    private static final int NUMBER_OF_RIZIV = 8;
 
     @Value("${path-um}")
     private Path PATH_TO_UM;
@@ -41,11 +45,22 @@ public class Medidoc {
         this.personService = personService;
     }
 
-    public Path makeFile(Path pathToTxt) {
+    public Path makeRepFile(Path pathToTxt) {
         String fullDocument = buildDocument(pathToTxt);
         Path result = null;
         try {
             result = Files.write(Paths.get(PATH_TO_UM + "/HEC_" + mnemonic + "R_" + refNr + "R.REP"), fullDocument.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public Path makeAdrFile() {
+        String first8NumbersOfrizivFromCaregiverToSend = StringUtils.left(caregiverToSendLetter.getNihii(), NUMBER_OF_RIZIV);
+        Path result = null;
+        try {
+            result = Files.write(Paths.get(PATH_TO_UM + "/HEC_" + mnemonic + "R_" + refNr + "R.ADR"), first8NumbersOfrizivFromCaregiverToSend.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -69,7 +84,7 @@ public class Medidoc {
         StringBuilder result = new StringBuilder();
         mnemonic = TxtUtil.getMnemnonic(pathToTxt);
         externalCaregiver = externalCaregiverService.findByMnemonic(mnemonic);
-        ExternalCaregiver caregiverToSendLetter = externalCaregiverService.findByMnemonic(TxtUtil.getMnemonicAfterUA
+        caregiverToSendLetter = externalCaregiverService.findByMnemonic(TxtUtil.getMnemonicAfterUA
                 (pathToTxt));
 
         // LINE1: rizivNr (Format: C/CCCCC/CC/CCC) :

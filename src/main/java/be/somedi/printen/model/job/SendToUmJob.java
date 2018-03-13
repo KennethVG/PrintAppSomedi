@@ -20,7 +20,8 @@ public class SendToUmJob {
     }
 
     public boolean formatAndSend(Path pathToTxt){
-        Path file = medidoc.makeFile(pathToTxt);
-        return Files.exists(file);
+        Path repFile = medidoc.makeRepFile(pathToTxt);
+        Path adrFile = medidoc.makeAdrFile();
+        return Files.exists(repFile) && Files.exists(adrFile);
     }
 }

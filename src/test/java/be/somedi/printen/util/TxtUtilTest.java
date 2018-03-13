@@ -32,7 +32,6 @@ public class TxtUtilTest {
         Path path = resNotToPrint.getFile().toPath();
         boolean toPrint = TxtUtil.isPathWithLetterNotToPrint(path);
         assertTrue(toPrint);
-
     }
 
     @Test

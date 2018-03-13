@@ -35,20 +35,20 @@ public class PrintJob {
     @Autowired
     public PrintJob(ExternalCaregiverService service, SendToUmJob sendToUmJob) {
         this.service = service;
-        this.sendToUmJob =sendToUmJob;
+        this.sendToUmJob = sendToUmJob;
     }
 
     public void startPrintJob() {
         System.out.println("Path to read= " + PATH_TO_READ);
 
         // Directory één keer al volledig nakijken en printjobs uitvoeren
-       checkDirectoryAndRunJob();
+        checkDirectoryAndRunJob();
 
         // Telkens er een nieuwe file in directory komt printjob uitvoeren
         watchDirectory();
     }
 
-    public void stopPrintJob(){
+    public void stopPrintJob() {
         try {
             watchService.close();
         } catch (IOException e) {
@@ -56,15 +56,15 @@ public class PrintJob {
         }
     }
 
-    private void checkDirectoryAndRunJob(){
+    private void checkDirectoryAndRunJob() {
         try {
-           Files.list(PATH_TO_READ)
+            Files.list(PATH_TO_READ)
                     .filter(Files::isRegularFile)
                     .filter(path -> StringUtils.endsWith(path.toString(), ".txt"))
                     .filter(path -> {
                         if (isPrintNeeded(path)) {
                             return makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + path.getFileName()));
-                        }else
+                        } else
                             return makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + path.getFileName()));
                     }).count();
 
@@ -73,8 +73,8 @@ public class PrintJob {
         }
     }
 
-    private void watchDirectory(){
-        try  {
+    private void watchDirectory() {
+        try {
             watchService = PATH_TO_READ.getFileSystem().newWatchService();
             PATH_TO_READ.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
 
@@ -108,26 +108,21 @@ public class PrintJob {
 
     private boolean isPrintNeeded(Path path) {
 
-        //TODO: juist plaatsen!
-        boolean formatAndSend = sendToUmJob.formatAndSend(path);
-        if(formatAndSend){
-            System.out.println("VERZENDEN NAAR UM IS GELUKT");
-        } else {
-            System.out.println("VERZENDEN NAAR UM IS NIET GELUKT");
-        }
-
-
         ExternalCaregiver caregiverToPrint = service.findByMnemonic(TxtUtil.getMnemnonic(path));
-        System.out.println("Caregiver: " + caregiverToPrint);
+
         Boolean toPrint = null != caregiverToPrint && null != caregiverToPrint.getPrintProtocols();
-
-        if (toPrint && caregiverToPrint.getPrintProtocols()) {
-            String fileToPrint = FilenameUtils.getBaseName(path.toString()).replace("MSE", "PDF");
-
-            if (!TxtUtil.isPathWithLetterNotToPrint(path)) {
-                return isPrinted(Paths.get(PATH_TO_READ + "\\" + fileToPrint + ".pdf"));
+        if (TxtUtil.isPathWithLetterNotToPrint(path)) {
+            System.out.println("This letter contains vul_aan/ mag_weg ... " + path.getFileName());
+        } else {
+            // SEND TO UM:
+            if (sendToUmJob.formatAndSend(path)) {
+                System.out.println("Verzenden naar UM is gelukt!");
             } else {
-                System.out.println("This letter contains vul_aan/ mag_weg ... " + path.getFileName());
+                System.out.println("Verzenden naar UM is NIET gelukt!");
+            }
+            if (toPrint && caregiverToPrint.getPrintProtocols()) {
+                String fileToPrint = FilenameUtils.getBaseName(path.toString()).replace("MSE", "PDF");
+                return isPrinted(Paths.get(PATH_TO_READ + "\\" + fileToPrint + ".pdf"));
             }
         }
         return false;
@@ -173,5 +168,3 @@ public class PrintJob {
         return true;
     }
 }
-
-
