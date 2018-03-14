@@ -2,6 +2,7 @@ package be.somedi.printen.model.job;
 
 import be.somedi.printen.entity.ExternalCaregiver;
 import be.somedi.printen.service.ExternalCaregiverService;
+import be.somedi.printen.util.IOUtil;
 import be.somedi.printen.util.TxtUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -62,10 +63,10 @@ public class PrintJob {
                     .filter(Files::isRegularFile)
                     .filter(path -> StringUtils.endsWith(path.toString(), ".txt"))
                     .filter(path -> {
-                        if (isPrintNeeded(path)) {
-                            return makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + path.getFileName()));
+                        if (isPrintAndSendJobSucceeded(path)) {
+                            return IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + path.getFileName()));
                         } else
-                            return makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + path.getFileName()));
+                            return IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + path.getFileName()));
                     }).count();
 
         } catch (IOException e) {
@@ -89,10 +90,10 @@ public class PrintJob {
 
                     if (Files.isRegularFile(path) && StringUtils.endsWith(path.toString(), ".txt")) {
                         System.out.println("Regular file, end with .txt");
-                        if (isPrintNeeded(path))
-                            makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + fileName));
+                        if (isPrintAndSendJobSucceeded(path))
+                            IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + fileName));
                         else
-                            makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + fileName));
+                            IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + fileName));
                     }
                 }
 
@@ -102,30 +103,39 @@ public class PrintJob {
             }
 
         } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
             Thread.currentThread().interrupt();
         }
     }
 
-    private boolean isPrintNeeded(Path path) {
-
+    private boolean isPrintAndSendJobSucceeded(Path path) {
+        String errorMessage;
+        if (TxtUtil.isPathWithLetterNotToPrint(path)) {
+            errorMessage = "Deze brief bevat vul_aan, P.N. of een ander woord waardoor de brief niet verzonden hoeft te worden";
+            IOUtil.writeFileToError(PATH_TO_ERROR, path, errorMessage);
+            return false;
+        }
         ExternalCaregiver caregiverToPrint = service.findByMnemonic(TxtUtil.getMnemnonic(path));
 
-        Boolean toPrint = null != caregiverToPrint && null != caregiverToPrint.getPrintProtocols();
-        if (TxtUtil.isPathWithLetterNotToPrint(path)) {
-            System.out.println("This letter contains vul_aan/ mag_weg ... " + path.getFileName());
-        } else {
+        if (null != caregiverToPrint) {
             // SEND TO UM:
             if (sendToUmJob.formatAndSend(path)) {
                 System.out.println("Verzenden naar UM is gelukt!");
             } else {
                 System.out.println("Verzenden naar UM is NIET gelukt!");
             }
-            if (toPrint && caregiverToPrint.getPrintProtocols()) {
+            if (null != caregiverToPrint.getPrintProtocols() && caregiverToPrint.getPrintProtocols()) {
                 String fileToPrint = FilenameUtils.getBaseName(path.toString()).replace("MSE", "PDF");
-                return isPrinted(Paths.get(PATH_TO_READ + "\\" + fileToPrint + ".pdf"));
+                if(isPrinted(Paths.get(PATH_TO_READ + "\\" + fileToPrint + ".pdf"))){
+                    return true;
+                } else {
+                    errorMessage = "PDF NOT FOUND: " + fileToPrint + ".pdf";
+                    IOUtil.writeFileToError(PATH_TO_ERROR, path, errorMessage);
+                    return false;
+                }
             }
         }
-        return false;
+        return true;
     }
 
     private boolean isPrinted(Path path) {
@@ -144,27 +154,8 @@ public class PrintJob {
             }
         } catch (IOException | PrinterException e) {
             System.out.println(e.getMessage());
+            e.printStackTrace();
         }
-        System.out.println("PDF NOT FOUND: " + path);
         return false;
-    }
-
-
-    private boolean makeBackUpAndDelete(Path fromPath, Path toPath) {
-        if (Files.exists(fromPath)) {
-            System.out.println("Make backup: from " + fromPath + " to " + toPath);
-            try {
-                Files.copy(fromPath, toPath, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if (fromPath.toFile().delete()) {
-                System.out.println("Deleted: " + fromPath);
-                return false;
-            }
-        }
-        System.out.println("PATH does not exist: " + fromPath);
-
-        return true;
     }
 }

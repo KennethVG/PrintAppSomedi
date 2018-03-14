@@ -56,7 +56,6 @@ public class TxtUtil {
                 toPrint = Stream.of(DeleteItems.values()).anyMatch(deleteItems -> finalCurrentLine.contains
                         (deleteItems.getText()) || deleteItems.getText().equalsIgnoreCase(finalCurrentLine));
                 if (toPrint) {
-                    System.out.println("Print bevat vul_aan of andere ... --> NIET PRINTEN!");
                     return true;
                 }
             }

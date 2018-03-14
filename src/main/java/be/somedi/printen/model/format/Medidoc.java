@@ -6,16 +6,14 @@ import be.somedi.printen.entity.Person;
 import be.somedi.printen.service.ExternalCaregiverService;
 import be.somedi.printen.service.PatientService;
 import be.somedi.printen.service.PersonService;
+import be.somedi.printen.util.IOUtil;
 import be.somedi.printen.util.TxtUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
 import static be.somedi.printen.util.FormatUtil.*;
@@ -47,24 +45,12 @@ public class Medidoc {
 
     public Path makeRepFile(Path pathToTxt) {
         String fullDocument = buildDocument(pathToTxt);
-        Path result = null;
-        try {
-            result = Files.write(Paths.get(PATH_TO_UM + "/HEC_" + mnemonic + "R_" + refNr + "R.REP"), fullDocument.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
+        return IOUtil.writeFileToUM(PATH_TO_UM, mnemonic, refNr, "REP", fullDocument);
     }
 
     public Path makeAdrFile() {
         String first8NumbersOfrizivFromCaregiverToSend = StringUtils.left(caregiverToSendLetter.getNihii(), NUMBER_OF_RIZIV);
-        Path result = null;
-        try {
-            result = Files.write(Paths.get(PATH_TO_UM + "/HEC_" + mnemonic + "R_" + refNr + "R.ADR"), first8NumbersOfrizivFromCaregiverToSend.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
+       return IOUtil.writeFileToUM(PATH_TO_UM, mnemonic, refNr, "ADR", first8NumbersOfrizivFromCaregiverToSend);
     }
 
     public String buildDocument(Path pathToTxt) {
