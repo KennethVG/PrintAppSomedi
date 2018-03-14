@@ -46,9 +46,4 @@ public class FormatUtil {
         }
         return Gender.UNDEFINED.getAbbreviation();
     }
-
-    public static long countNumberOfLines(String text) {
-        return text.chars().filter(string -> string == '\n').count() + 1;
-    }
-
 }

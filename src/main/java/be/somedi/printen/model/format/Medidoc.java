@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 
 import static be.somedi.printen.util.FormatUtil.*;
+import static be.somedi.printen.util.TxtUtil.countNumberOfLines;
 
 @Component
 public class Medidoc {

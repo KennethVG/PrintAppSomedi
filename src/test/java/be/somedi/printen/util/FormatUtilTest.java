@@ -2,9 +2,14 @@ package be.somedi.printen.util;
 
 import be.somedi.printen.model.format.Medidoc;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.List;
 
 import static be.somedi.printen.util.FormatUtil.*;
 import static org.junit.Assert.assertEquals;
@@ -52,5 +57,4 @@ public class FormatUtilTest {
         assertEquals("X", formatGender(female));
         assertEquals("Y", formatGender(male));
     }
-
 }

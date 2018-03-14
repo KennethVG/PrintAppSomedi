@@ -4,8 +4,11 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
+import static be.somedi.printen.util.TxtUtil.countNumberOfLines;
 import static org.junit.Assert.*;
 
 public class TxtUtilTest {
@@ -90,6 +93,75 @@ public class TxtUtilTest {
     }
 
     @Test
+    public void testGetBodyWithSummary() throws IOException {
+        ClassPathResource txtFile = new ClassPathResource("besluit.txt");
+        Path path = txtFile.getFile().toPath();
+        String result = TxtUtil.getBodyOfTxt(path);
+        String expected = "Betreft : uw patiënt(e) Van Vliet Alexandra geboren op 11/10/2006   en\n" +
+                " wonende\n" +
+                "Kerkhofstraat 43 te 2220 Heist-op-den-Berg. \n" +
+                "\n" +
+                " Consultatie : 04/01/2018 met referentienr : 182670181\n" +
+                "\n" +
+                "* ANAMNESE:\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
+                "\n" +
+                " * klinisch onderzoekklinisch onderzoek\n" +
+                "\n" +
+                " * BESLUIT:\n" +
+                "]blablablabla\n" +
+                "]blablablablablablablablablablablablabla blablablablablablablablablabl\n" +
+                "] ablablablablablablablablabl ablablablablablablab labla\n" +
+                "]Einde besluit\n" +
+                "\n" +
+                "Met vriendelijke groeten,";
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testGetBodyWithLongSummary() throws IOException {
+        ClassPathResource txtFile = new ClassPathResource("langBesluit.txt");
+        Path path = txtFile.getFile().toPath();
+        String result = TxtUtil.getBodyOfTxt(path);
+        String expected = "Betreft : uw patiënt(e) Van Vliet Alexandra geboren op 11/10/2006   en\n" +
+                " wonende\n" +
+                "Kerkhofstraat 43 te 2220 Heist-op-den-Berg. \n" +
+                "\n" +
+                " Consultatie : 04/01/2018 met referentienr : 182670181\n" +
+                "\n" +
+                "* ANAMNESE:\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
+                "\n" +
+                " * klinisch onderzoekklinisch onderzoek\n" +
+                "\n" +
+                " * BESLUIT:\n" +
+                "]blablablabla\n" +
+                "]blablablablablablablablablablablablabla blablablablablablablablablabl\n" +
+                "] ablablablablablablablablabl ablablablablablablab labla\n" +
+                "]Dit is een heel\n" +
+                "]maar echt heeel\n" +
+                "]heel\n" +
+                "]heel\n" +
+                " lang\n" +
+                " besluit. OK!\n" +
+                " Einde besluit\n" +
+                "\n" +
+                "\n" +
+                "Met vriendelijke groeten,";
+        assertEquals(expected, result);
+    }
+
+    @Test
     public void testGetMnemonic() throws IOException {
         ClassPathResource txtFile = new ClassPathResource("MSE_182670181_2976687_A4407.txt");
         Path path = txtFile.getFile().toPath();
@@ -130,5 +202,13 @@ public class TxtUtilTest {
         assertEquals("04012018", ud);
     }
 
+    @Test
+    public void testCountNumberOfLines() {
+        String doc = "Hello World" +
+                "\nHello Mars " +
+                "\nHello Everyone " +
+                "\nHello myself";
+        assertEquals(4L, countNumberOfLines(doc));
+    }
 
 }

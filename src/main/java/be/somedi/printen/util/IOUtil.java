@@ -10,12 +10,14 @@ import java.nio.file.StandardCopyOption;
 
 public class IOUtil {
 
-    public static void writeFileToError(Path pathToError, Path pathToTxt, String errormessage) {
+    public static Path writeFileToError(Path pathToError, Path pathToTxt, String errormessage) {
+        Path path = null;
         try {
-            Files.write(Paths.get(pathToError + "\\" + FilenameUtils.getBaseName(pathToTxt.toString()) + ".err"), errormessage.getBytes());
+            path = Files.write(Paths.get(pathToError + "\\" + FilenameUtils.getBaseName(pathToTxt.toString()) + ".err"), errormessage.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return path;
     }
 
     public static Path writeFileToUM(Path pathToUM, String mnemonic, String refNr, String ext, String text){

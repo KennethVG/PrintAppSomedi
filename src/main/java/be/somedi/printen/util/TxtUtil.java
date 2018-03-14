@@ -32,6 +32,9 @@ public class TxtUtil {
 
     private static final int MNEMONIC_LENGTH = 5;
     private static final int LINE_LENGTH = 75;
+    private static final int LINE_LENGTH_SUMMARY = 74;
+    private static final int CONSULTID_MAX_LENGTH = 15;
+    private static final int SUMMARY_MAX_LENGTH = 7;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TxtUtil.class);
 
@@ -43,7 +46,7 @@ public class TxtUtil {
 
             String lineWithConsultId = bufferedReader.lines().filter(line -> line.trim().toUpperCase().startsWith(PR)
             ).findFirst().orElseThrow(RuntimeException::new);
-            if (lineWithConsultId.length() > 15) {
+            if (lineWithConsultId.length() > CONSULTID_MAX_LENGTH) {
                 LOGGER.debug(PR + " is groter dan 15 --> NIET PRINTEN!");
                 System.out.println(PR + " is groter dan 15 --> NIET PRINTEN!");
                 return true;
@@ -69,29 +72,45 @@ public class TxtUtil {
 
         StringBuilder result = new StringBuilder();
         int startIndex = 0;
+        int startSummaryIndex = 0;
         int endIndex = 0;
 
         try {
             List<String> allLines = Files.readAllLines(pathToTxt);
+            String oneLine;
             for (int i = 0; i < allLines.size(); i++) {
-                if (allLines.get(i).trim().startsWith(BETREFT)) {
+                oneLine = allLines.get(i).trim();
+                if (oneLine.startsWith(BETREFT)) {
                     startIndex = i;
-                }
-                if (allLines.get(i).trim().startsWith(MET_VRIENDELIJKE_GROETEN)) {
+                } else if (oneLine.contains(BESLUIT)) {
+                    startSummaryIndex = i;
+                } else if (oneLine.startsWith(MET_VRIENDELIJKE_GROETEN)) {
                     endIndex = i;
                 }
             }
 
             if (startIndex != 0 && endIndex != 0) {
-                for (int i = startIndex; i <= endIndex; i++) {
-                    String oneLine = allLines.get(i);
-                    if(oneLine.length()>LINE_LENGTH){
-                        String first75 = StringUtils.left(oneLine, LINE_LENGTH);
-                        int index = StringUtils.lastIndexOf(first75, " ");
-                        result.append(StringUtils.substring(first75, 0, index)).append("\n").append(StringUtils.substring(oneLine, index)).append("\n");
-                    } else {
-                        result.append(oneLine).append("\n");
+                // Er is een besluit. Max. 7 lijnen starten met ]
+                if (startSummaryIndex != 0) {
+                    result.append(buildBody(startIndex, startSummaryIndex, allLines));
+                    for (int j = startSummaryIndex + 1; j <= endIndex && j< startSummaryIndex + SUMMARY_MAX_LENGTH; j++) {
+                        oneLine = allLines.get(j).trim();
+                        if (oneLine.length() > LINE_LENGTH) {
+                            String summary = StringUtils.left(oneLine, LINE_LENGTH_SUMMARY);
+                            int summaryIndex = StringUtils.lastIndexOf(summary, " ");
+                            result.append("]").append(summary, 0, summaryIndex).append("\n").append("]").append(StringUtils.substring(oneLine, summaryIndex)).append("\n");
+                        } else if (oneLine.equals("") || j == endIndex) {
+                            result.append(oneLine).append("\n");
+                        } else {
+                            result.append("]").append(oneLine).append("\n");
+                        }
                     }
+                    if(endIndex> startSummaryIndex + SUMMARY_MAX_LENGTH){
+                        result.append(buildBody(startSummaryIndex + SUMMARY_MAX_LENGTH, endIndex, allLines));
+                    }
+                }
+                else {
+                    result.append(buildBody(startIndex, endIndex, allLines));
                 }
             }
         } catch (IOException e) {
@@ -136,7 +155,7 @@ public class TxtUtil {
         return getTextAfterKeyword(UD, pathToTxt);
     }
 
-    public static String getRefNrAfterPR(Path pathToTxt){
+    public static String getRefNrAfterPR(Path pathToTxt) {
         return getTextAfterKeyword(PR, pathToTxt);
     }
 
@@ -144,6 +163,25 @@ public class TxtUtil {
     public static String getMnemnonic(Path path) {
         String fileName = FilenameUtils.getBaseName(path.toString());
         return StringUtils.right(FilenameUtils.removeExtension(fileName), MNEMONIC_LENGTH);
+    }
+
+    public static long countNumberOfLines(String text) {
+        return text.chars().filter(string -> string == '\n').count() + 1;
+    }
+
+    private static String buildBody(int startIndex, int endIndex, List<String> allLines) {
+        StringBuilder result = new StringBuilder();
+        for (int i = startIndex; i <= endIndex; i++) {
+            String oneLine = allLines.get(i);
+            if (oneLine.length() > LINE_LENGTH) {
+                String first75 = StringUtils.left(oneLine, LINE_LENGTH);
+                int index = StringUtils.lastIndexOf(first75, " ");
+                result.append(StringUtils.substring(first75, 0, index)).append("\n").append(StringUtils.substring(oneLine, index)).append("\n");
+            } else {
+                result.append(oneLine).append("\n");
+            }
+        }
+        return result.toString();
     }
 
     private static String getTextAfterKeyword(String keyword, Path pathToTxt) {
@@ -158,5 +196,6 @@ public class TxtUtil {
         }
         return result;
     }
+
 
 }
