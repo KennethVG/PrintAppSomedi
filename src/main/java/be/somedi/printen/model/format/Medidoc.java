@@ -9,6 +9,7 @@ import be.somedi.printen.service.PersonService;
 import be.somedi.printen.util.IOUtil;
 import be.somedi.printen.util.TxtUtil;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.Serializers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -20,59 +21,39 @@ import static be.somedi.printen.util.FormatUtil.*;
 import static be.somedi.printen.util.TxtUtil.countNumberOfLines;
 
 @Component
-public class Medidoc {
-
-    private final ExternalCaregiverService externalCaregiverService;
-    private final PatientService patientService;
-    private final PersonService personService;
-
-    private ExternalCaregiver externalCaregiver;
-    private ExternalCaregiver caregiverToSendLetter;
-    private String mnemonic;
-    private String refNr;
+public class Medidoc extends BaseFormat {
 
     private static final int NUMBER_OF_RIZIV = 8;
 
     @Value("${path-um}")
     private Path PATH_TO_UM;
 
-    @Autowired
-    public Medidoc(ExternalCaregiverService externalCaregiverService, PatientService patientService, PersonService
-            personService) {
-        this.externalCaregiverService = externalCaregiverService;
-        this.patientService = patientService;
-        this.personService = personService;
+    public Medidoc(ExternalCaregiverService externalCaregiverService, PatientService patientService, PersonService personService) {
+        super(externalCaregiverService, patientService, personService);
     }
 
-    public Path makeRepFile(Path pathToTxt) {
-        String fullDocument = buildDocument(pathToTxt);
-        return IOUtil.writeFileToUM(PATH_TO_UM, mnemonic, refNr, "REP", fullDocument);
+    public Path makeRepFile() {
+        return IOUtil.writeFileToUM(PATH_TO_UM, getMnemonic(), getRefNr(), "REP", buildDocument());
     }
 
     public Path makeAdrFile() {
-        String first8NumbersOfrizivFromCaregiverToSend = StringUtils.left(caregiverToSendLetter.getNihii(), NUMBER_OF_RIZIV);
-       return IOUtil.writeFileToUM(PATH_TO_UM, mnemonic, refNr, "ADR", first8NumbersOfrizivFromCaregiverToSend);
+        String first8NumbersOfrizivFromCaregiverToSend = StringUtils.left(getCaregiverToSendLetter().getNihii(), NUMBER_OF_RIZIV);
+        return IOUtil.writeFileToUM(PATH_TO_UM, getMnemonic(), getRefNr(), "ADR", first8NumbersOfrizivFromCaregiverToSend);
     }
 
-    public String buildDocument(Path pathToTxt) {
+    @Override
+    public String buildDocument() {
         StringBuilder result = new StringBuilder();
-        String heading = buildHeading(pathToTxt);
-        String headingLetter = buildHeadingLetter(pathToTxt);
-        String body = buildBody(pathToTxt);
-        long count = countNumberOfLines(heading) + countNumberOfLines(headingLetter) + countNumberOfLines(body);
-
-        result.append(heading).append("\n").append(headingLetter).append(body).append("\n").append("#/").append(count);
+        long count = countNumberOfLines(buildHeading()) + countNumberOfLines(buildHeadingLetter()) + countNumberOfLines(buildBody());
+        result.append(buildHeading()).append("\n").append(buildHeadingLetter()).append(buildBody()).append("\n").append("#/").append(count);
         return result.toString();
-
     }
 
-    public String buildHeading(Path pathToTxt) {
+    private String buildHeading() {
 
         StringBuilder result = new StringBuilder();
-        mnemonic = TxtUtil.getMnemnonic(pathToTxt);
-        externalCaregiver = externalCaregiverService.findByMnemonic(mnemonic);
-        caregiverToSendLetter = externalCaregiverService.findByMnemonic(TxtUtil.getMnemonicAfterUA
-                (pathToTxt));
+        ExternalCaregiver externalCaregiver = getExternalCaregiver();
+        ExternalCaregiver caregiverToSendLetter = getCaregiverToSendLetter();
 
         // LINE1: rizivNr (Format: C/CCCCC/CC/CCC) :
         result.append(formatRiziv(externalCaregiver.getNihii())).append("\n");
@@ -103,39 +84,37 @@ public class Medidoc {
         return result.toString();
     }
 
-    public String buildHeadingLetter(Path pathToTxt) {
+    private String buildHeadingLetter() {
 
         StringBuilder result = new StringBuilder();
-        String externalId = TxtUtil.getExternalIdAfterPC(pathToTxt);
-        Patient patient = patientService.findByExternalId(externalId);
-        Person person = personService.findById((long) patient.getPersonId());
+        String externalId = TxtUtil.getExternalIdAfterPC(getPathToTxt());
+        Patient patient = getPatientService().findByExternalId(externalId);
+        Person person = getPersonService().findById((long) patient.getPersonId());
 
         //LINE1: Aanduiding (Format: #ArrnPatiënt)
         result.append("#A").append(person.getInss()).append("\n");
 
         //LINE2: Naam (24) en voornaam (max.16) patiënt
-        result.append(formatStringWithBlanks(TxtUtil.getNameAfterPN(pathToTxt), 24));
-        result.append(formatStringWithMaxChars(TxtUtil.getFirstNameAfterPV(pathToTxt), 16)).append("\n");
+        result.append(formatStringWithBlanks(TxtUtil.getNameAfterPN(getPathToTxt()), 24));
+        result.append(formatStringWithMaxChars(TxtUtil.getFirstNameAfterPV(getPathToTxt()), 16)).append("\n");
 
         //LINE3: Geboortedatum patiënt (Format: JJMMDD)
-        result.append(formatDate(TxtUtil.getBirthDateAtferPD(pathToTxt))).append("\n");
+        result.append(formatDate(TxtUtil.getBirthDateAtferPD(getPathToTxt()))).append("\n");
 
         //LINE4: Geslacht patient (X (vrouwelijk), Y (mannelijk), Z(onbepaald))
         result.append(formatGender(externalId)).append("\n");
 
         //LINE5: Datum aanvraag onderzoek
-        result.append(formatDate(TxtUtil.getDateOfResearchAfterUD(pathToTxt))).append("\n");
+        result.append(formatDate(TxtUtil.getDateOfResearchAfterUD(getPathToTxt()))).append("\n");
 
         //LINE6: RefNr (14 karakters)
-        refNr = TxtUtil.getRefNrAfterPR(pathToTxt);
-        result.append(formatStringWithBlanks(refNr, 14)).append("\n").append("\n");
+        result.append(formatStringWithBlanks(getRefNr(), 14)).append("\n").append("\n");
 
         return result.toString();
     }
 
-    public String buildBody(Path pathToTxt) {
+    private String buildBody() {
         StringBuilder result = new StringBuilder();
-        externalCaregiver = externalCaregiverService.findByMnemonic(TxtUtil.getMnemnonic(pathToTxt));
 
         //LINE1: Aanduiding begin resultaat
         result.append("#Rb").append("\n");
@@ -146,9 +125,9 @@ public class Medidoc {
 
         //LINE3: uitslag (Max. 75 karakters per lijn, ] = BESLUIT)
         result.append("Geachte collega,").append("\n\n");
-        result.append(TxtUtil.getBodyOfTxt(pathToTxt)).append("\n")
-                .append(externalCaregiver.getFirstName()).append(" ")
-                .append(externalCaregiver.getLastName()).append("\n");
+        result.append(TxtUtil.getBodyOfTxt(getPathToTxt())).append("\n")
+                .append(getExternalCaregiver().getFirstName()).append(" ")
+                .append(getExternalCaregiver().getLastName()).append("\n");
 
         //EINDE:
         result.append("#R/").append("\n").append("#A/");

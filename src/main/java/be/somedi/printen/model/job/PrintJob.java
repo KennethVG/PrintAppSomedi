@@ -119,7 +119,7 @@ public class PrintJob {
 
         if (null != caregiverToPrint) {
             // SEND TO UM:
-            if (sendToUmJob.formatAndSend(path)) {
+            if (sendToUmJob.formatAndSend(caregiverToPrint, path)) {
                 System.out.println("Verzenden naar UM is gelukt!");
             } else {
                 System.out.println("Verzenden naar UM is NIET gelukt!");

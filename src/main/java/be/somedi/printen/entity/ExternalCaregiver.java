@@ -1,5 +1,7 @@
 package be.somedi.printen.entity;
 
+import be.somedi.printen.model.UMFormat;
+
 import javax.persistence.*;
 
 @Entity
@@ -20,7 +22,9 @@ public class ExternalCaregiver {
     private String phone;
     private Boolean printProtocols;
     private String copyToExternalID;
-    private String format;
+
+    @Enumerated(EnumType.STRING)
+    private UMFormat format;
 
     public Long getId() {
         return id;
@@ -70,7 +74,7 @@ public class ExternalCaregiver {
         return copyToExternalID;
     }
 
-    public String getFormat() {
+    public UMFormat getFormat() {
         return format;
     }
 
