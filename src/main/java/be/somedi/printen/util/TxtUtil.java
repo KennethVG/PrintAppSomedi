@@ -39,6 +39,7 @@ public class TxtUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(TxtUtil.class);
 
     public static boolean isPathWithLetterNotToPrint(Path pathToTxt) {
+        LOGGER.debug("Inside method: isPathWithLetterNotToPrint: ");
 
         boolean toPrint = false;
 
@@ -48,7 +49,6 @@ public class TxtUtil {
             ).findFirst().orElseThrow(RuntimeException::new);
             if (lineWithConsultId.length() > CONSULTID_MAX_LENGTH) {
                 LOGGER.debug(PR + " is groter dan 15 --> NIET PRINTEN!");
-                System.out.println(PR + " is groter dan 15 --> NIET PRINTEN!");
                 return true;
             }
 
@@ -63,13 +63,13 @@ public class TxtUtil {
                 }
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error(e.getMessage());
         }
         return toPrint;
     }
 
     public static String getBodyOfTxt(Path pathToTxt) {
-
+        LOGGER.debug("Inside method: getBodyOfTxt: ");
         StringBuilder result = new StringBuilder();
         int startIndex = 0;
         int startSummaryIndex = 0;
