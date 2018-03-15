@@ -4,7 +4,7 @@ public enum PrintProtocols {
 
     JA(true), NEE(false);
 
-    private boolean value;
+    private final boolean value;
 
     PrintProtocols(boolean value) {
         this.value = value;

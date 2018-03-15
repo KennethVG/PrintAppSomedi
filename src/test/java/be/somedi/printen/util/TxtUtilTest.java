@@ -4,9 +4,7 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 import static be.somedi.printen.util.TxtUtil.countNumberOfLines;
 import static org.junit.Assert.*;

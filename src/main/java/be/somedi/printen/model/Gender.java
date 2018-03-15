@@ -4,7 +4,7 @@ public enum Gender {
 
     MALE("Y"), FEMALE("X"), UNDEFINED("Z");
 
-    private String abbreviation;
+    private final String abbreviation;
 
     Gender(String abbreviation){
         this.abbreviation = abbreviation;

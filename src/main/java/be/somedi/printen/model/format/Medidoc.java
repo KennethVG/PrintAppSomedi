@@ -145,7 +145,6 @@ public class Medidoc {
         result.append("!Onderzoek").append("\n");
 
         //LINE3: uitslag (Max. 75 karakters per lijn, ] = BESLUIT)
-        //Todo: besluit in orde brengen
         result.append("Geachte collega,").append("\n\n");
         result.append(TxtUtil.getBodyOfTxt(pathToTxt)).append("\n")
                 .append(externalCaregiver.getFirstName()).append(" ")

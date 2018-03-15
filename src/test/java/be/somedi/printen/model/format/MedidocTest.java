@@ -14,7 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.time.Month;
 
 import static be.somedi.printen.util.FormatUtil.formatDateAndTime;
 import static org.junit.Assert.assertEquals;

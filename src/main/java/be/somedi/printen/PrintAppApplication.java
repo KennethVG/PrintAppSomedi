@@ -35,7 +35,7 @@ public class PrintAppApplication extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
         primaryStage.setScene(scene);
@@ -46,7 +46,7 @@ public class PrintAppApplication extends Application {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void stop() {
         context.stop();
     }
 
