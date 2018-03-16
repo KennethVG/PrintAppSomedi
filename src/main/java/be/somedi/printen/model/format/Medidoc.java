@@ -36,9 +36,9 @@ public class Medidoc extends BaseFormat {
         return IOUtil.writeFileToUM(PATH_TO_UM, getMnemonic(), getRefNr(), "REP", buildDocument());
     }
 
-    public Path makeAdrFile() {
-        String first8NumbersOfrizivFromCaregiverToSend = StringUtils.left(getCaregiverToSendLetter().getNihii(), NUMBER_OF_RIZIV);
-        return IOUtil.writeFileToUM(PATH_TO_UM, getMnemonic(), getRefNr(), "ADR", first8NumbersOfrizivFromCaregiverToSend);
+    public Path makeAdrFile(ExternalCaregiver caregiverToSend) {
+        String first8NumbersOfrizivFromCaregiverToSend = StringUtils.left(caregiverToSend.getNihii(), NUMBER_OF_RIZIV);
+        return IOUtil.writeFileToUM(PATH_TO_UM, caregiverToSend.getExternalID(), caregiverToSend.getNihii(), "ADR", first8NumbersOfrizivFromCaregiverToSend);
     }
 
     @Override

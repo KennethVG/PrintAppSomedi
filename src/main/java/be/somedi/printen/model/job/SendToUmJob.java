@@ -21,6 +21,7 @@ public class SendToUmJob {
 
     @Value("${path-um}")
     private Path PATH_TO_UM;
+
     private final BeanFactory beans;
 
     @Autowired
@@ -36,7 +37,7 @@ public class SendToUmJob {
                 baseFormat.setPathToTxt(pathToTxt);
                 Medidoc medidoc = (Medidoc) baseFormat;
                 Path repFile = medidoc.makeRepFile();
-                Path adrFile = medidoc.makeAdrFile();
+                Path adrFile = medidoc.makeAdrFile(caregiver);
                 return Files.exists(repFile) && Files.exists(adrFile);
             case HEALTH_ONE:
                 baseFormat = beans.getBean(HealthOne.class);

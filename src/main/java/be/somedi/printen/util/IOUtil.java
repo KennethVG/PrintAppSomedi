@@ -1,6 +1,9 @@
 package be.somedi.printen.util;
 
+import be.somedi.printen.model.job.PrintJob;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,6 +12,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class IOUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(IOUtil.class);
 
     public static Path writeFileToError(Path pathToError, Path pathToTxt, String errormessage) {
         Path path = null;
@@ -24,6 +29,7 @@ public class IOUtil {
         Path path = null;
         try {
             path = Files.write(Paths.get(pathToUM + "/HEC_" + mnemonic + "R_" + refNr + "R." + ext), text.getBytes());
+            LOGGER.debug("Path " + path + " created.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -32,18 +38,18 @@ public class IOUtil {
 
     public static boolean makeBackUpAndDelete(Path fromPath, Path toPath) {
         if (Files.exists(fromPath)) {
-            System.out.println("Make backup: from " + fromPath + " to " + toPath);
+            LOGGER.debug("Make backup: from " + fromPath + " to " + toPath);
             try {
                 Files.copy(fromPath, toPath, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             if (fromPath.toFile().delete()) {
-                System.out.println("Deleted: " + fromPath);
+                LOGGER.debug("Deleted: " + fromPath);
                 return false;
             }
         }
-        System.out.println("PATH does not exist: " + fromPath);
+        LOGGER.warn("PATH does not exist: " + fromPath);
         return true;
     }
 }

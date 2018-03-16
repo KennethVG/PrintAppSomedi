@@ -39,8 +39,6 @@ public class TxtUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(TxtUtil.class);
 
     public static boolean isPathWithLetterNotToPrint(Path pathToTxt) {
-        LOGGER.debug("Inside method: isPathWithLetterNotToPrint: ");
-
         boolean toPrint = false;
 
         try (BufferedReader bufferedReader = Files.newBufferedReader(pathToTxt)) {
@@ -48,13 +46,12 @@ public class TxtUtil {
             String lineWithConsultId = bufferedReader.lines().filter(line -> line.trim().toUpperCase().startsWith(PR)
             ).findFirst().orElseThrow(RuntimeException::new);
             if (lineWithConsultId.length() > CONSULTID_MAX_LENGTH) {
-                LOGGER.debug(PR + " is groter dan 15 --> NIET PRINTEN!");
+                LOGGER.info(PR + " of " + pathToTxt.getFileName() + " is groter dan 15 --> NIET PRINTEN!");
                 return true;
             }
 
             String currentLine;
             while ((currentLine = bufferedReader.readLine()) != null) {
-
                 String finalCurrentLine = currentLine.trim();
                 toPrint = Stream.of(DeleteItems.values()).anyMatch(deleteItems -> finalCurrentLine.contains
                         (deleteItems.getText()) || deleteItems.getText().equalsIgnoreCase(finalCurrentLine));
@@ -69,7 +66,6 @@ public class TxtUtil {
     }
 
     public static String getBodyOfTxt(Path pathToTxt) {
-        LOGGER.debug("Inside method: getBodyOfTxt: ");
         StringBuilder result = new StringBuilder();
         int startIndex = 0;
         int startSummaryIndex = 0;
@@ -114,7 +110,7 @@ public class TxtUtil {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
         return result.toString().trim();
     }
@@ -196,6 +192,4 @@ public class TxtUtil {
         }
         return result;
     }
-
-
 }

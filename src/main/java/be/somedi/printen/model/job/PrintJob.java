@@ -7,12 +7,15 @@ import be.somedi.printen.util.TxtUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
+import javax.transaction.Transactional;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.IOException;
@@ -33,6 +36,8 @@ public class PrintJob {
 
     private WatchService watchService;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PrintJob.class);
+
     @Autowired
     public PrintJob(ExternalCaregiverService service, SendToUmJob sendToUmJob) {
         this.service = service;
@@ -40,7 +45,7 @@ public class PrintJob {
     }
 
     public void startPrintJob() {
-        System.out.println("Path to read= " + PATH_TO_READ);
+        LOGGER.info("Path to read= " + PATH_TO_READ);
 
         // Directory één keer al volledig nakijken en printjobs uitvoeren
         checkDirectoryAndRunJob();
@@ -53,7 +58,7 @@ public class PrintJob {
         try {
             watchService.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
     }
 
@@ -70,6 +75,7 @@ public class PrintJob {
                     }).count();
 
         } catch (IOException e) {
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -84,12 +90,12 @@ public class PrintJob {
 
                 for (WatchEvent<?> event : watchKey.pollEvents()) {
                     final Path fileName = (Path) event.context();
-                    System.out.println("Path changed: " + fileName);
+                    LOGGER.debug("Path changed: " + fileName);
 
                     final Path path = Paths.get(PATH_TO_READ + "\\" + fileName);
 
                     if (Files.isRegularFile(path) && StringUtils.endsWith(path.toString(), ".txt")) {
-                        System.out.println("Regular file, end with .txt");
+                        LOGGER.debug("Regular file, end with .txt");
                         if (isPrintAndSendJobSucceeded(path))
                             IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + fileName));
                         else
@@ -98,12 +104,13 @@ public class PrintJob {
                 }
 
                 if (!watchKey.reset()) {
-                    System.out.println("Key has been unregistered");
+                    LOGGER.debug("Key has been unregistered");
                 }
             }
 
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            LOGGER.error(e.getMessage());
             Thread.currentThread().interrupt();
         }
     }
@@ -116,17 +123,14 @@ public class PrintJob {
             return false;
         }
         ExternalCaregiver caregiverToPrint = service.findByMnemonic(TxtUtil.getMnemnonic(path));
-
+        LOGGER.info("CaregiverToPrint: " + caregiverToPrint);
         if (null != caregiverToPrint) {
             // SEND TO UM:
-            if (sendToUmJob.formatAndSend(caregiverToPrint, path)) {
-                System.out.println("Verzenden naar UM is gelukt!");
-            } else {
-                System.out.println("Verzenden naar UM is NIET gelukt!");
-            }
+           sendToUM(caregiverToPrint, path);
+
             if (null != caregiverToPrint.getPrintProtocols() && caregiverToPrint.getPrintProtocols()) {
                 String fileToPrint = FilenameUtils.getBaseName(path.toString()).replace("MSE", "PDF");
-                if(isPrinted(Paths.get(PATH_TO_READ + "\\" + fileToPrint + ".pdf"))){
+                if (isPrinted(Paths.get(PATH_TO_READ + "\\" + fileToPrint + ".pdf"))) {
                     return true;
                 } else {
                     errorMessage = "PDF NOT FOUND: " + fileToPrint + ".pdf";
@@ -138,10 +142,40 @@ public class PrintJob {
         return true;
     }
 
+    //TODO: refactor
+    private void sendToUM(ExternalCaregiver caregiverToPrint, Path path ){
+        if (sendToUmJob.formatAndSend(caregiverToPrint, path)) {
+            LOGGER.debug(path + "  verzenden naar UM is gelukt!");
+
+            if (!caregiverToPrint.getCopyToExternalID().equalsIgnoreCase("NULL")) {
+                ExternalCaregiver caregiverToSendCopy = service.findByMnemonic(caregiverToPrint.getCopyToExternalID());
+                LOGGER.info("CaregiverToSendCopy: " + caregiverToSendCopy);
+                if (sendToUmJob.formatAndSend(caregiverToSendCopy, path)) {
+                    LOGGER.debug(path + "  CaregiverToSendCopy verzenden naar UM is gelukt!");
+                } else {
+                    LOGGER.debug(path + " CaregiverToSendCopy verzenden naar UM is NIET gelukt!");
+                }
+
+                while (!caregiverToSendCopy.getCopyToExternalID().equalsIgnoreCase("NULL")) {
+                    caregiverToSendCopy = service.findByMnemonic(caregiverToSendCopy.getCopyToExternalID());
+                    LOGGER.info("Another CaregiverToSendCopy: " + caregiverToSendCopy);
+                    if (sendToUmJob.formatAndSend(caregiverToSendCopy, path)) {
+                        LOGGER.debug(path + "  Another CaregiverToSendCopy verzenden naar UM is gelukt!");
+                    } else {
+                        LOGGER.debug(path + " Another CaregiverToSendCopy verzenden naar UM is NIET gelukt!");
+                    }
+                }
+            }
+
+        } else {
+            LOGGER.debug(path + " verzenden naar UM is NIET gelukt!");
+        }
+    }
+
     private boolean isPrinted(Path path) {
         try {
             if (Files.exists(path)) {
-                System.out.println("Printing: " + path.getFileName());
+                LOGGER.debug("Printing: " + path.getFileName());
                 PrintService myPrintService = PrintServiceLookup.lookupDefaultPrintService();
                 PrinterJob job = PrinterJob.getPrinterJob();
                 job.setPrintService(myPrintService);
@@ -149,11 +183,11 @@ public class PrintJob {
                 PDDocument document = PDDocument.load(path.toFile());
                 document.silentPrint(job);
                 document.close();
-                System.out.println("Succesfully printed: " + path.getFileName());
+                LOGGER.info("Succesfully printed: " + path.getFileName());
                 return true;
             }
         } catch (IOException | PrinterException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error(e.getMessage());
             e.printStackTrace();
         }
         return false;
