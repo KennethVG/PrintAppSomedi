@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = PrintAppApplication.class)
 @TestPropertySource({"/application.properties", "/application-dev.properties", "/path-dev.properties"})
-@ActiveProfiles("DEV")
+@ActiveProfiles("dev")
 public class MedidocTest {
 
     @Autowired

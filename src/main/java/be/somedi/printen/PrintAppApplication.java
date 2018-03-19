@@ -55,6 +55,4 @@ public class PrintAppApplication extends Application {
     propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-
-
 }

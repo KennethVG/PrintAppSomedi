@@ -1,7 +1,6 @@
 package be.somedi.printen.model.job;
 
 import be.somedi.printen.entity.ExternalCaregiver;
-import be.somedi.printen.model.UMFormat;
 import be.somedi.printen.model.format.BaseFormat;
 import be.somedi.printen.model.format.HealthOne;
 import be.somedi.printen.model.format.Medidoc;
@@ -12,9 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import static be.somedi.printen.model.UMFormat.HEALTH_ONE;
-import static be.somedi.printen.model.UMFormat.MEDIDOC;
 
 @Component
 public class SendToUmJob {
@@ -36,7 +32,7 @@ public class SendToUmJob {
                 baseFormat = beans.getBean(Medidoc.class);
                 baseFormat.setPathToTxt(pathToTxt);
                 Medidoc medidoc = (Medidoc) baseFormat;
-                Path repFile = medidoc.makeRepFile();
+                Path repFile = medidoc.makeRepFile(caregiver);
                 Path adrFile = medidoc.makeAdrFile(caregiver);
                 return Files.exists(repFile) && Files.exists(adrFile);
             case HEALTH_ONE:

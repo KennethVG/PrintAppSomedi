@@ -9,8 +9,6 @@ import be.somedi.printen.service.PersonService;
 import be.somedi.printen.util.IOUtil;
 import be.somedi.printen.util.TxtUtil;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.Serializers;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -32,13 +30,13 @@ public class Medidoc extends BaseFormat {
         super(externalCaregiverService, patientService, personService);
     }
 
-    public Path makeRepFile() {
-        return IOUtil.writeFileToUM(PATH_TO_UM, getMnemonic(), getRefNr(), "REP", buildDocument());
+    public Path makeRepFile(ExternalCaregiver caregiverToSend) {
+        return IOUtil.writeFileToUM(PATH_TO_UM, caregiverToSend.getExternalID(), getRefNr(), "REP", buildDocument());
     }
 
     public Path makeAdrFile(ExternalCaregiver caregiverToSend) {
         String first8NumbersOfrizivFromCaregiverToSend = StringUtils.left(caregiverToSend.getNihii(), NUMBER_OF_RIZIV);
-        return IOUtil.writeFileToUM(PATH_TO_UM, caregiverToSend.getExternalID(), caregiverToSend.getNihii(), "ADR", first8NumbersOfrizivFromCaregiverToSend);
+        return IOUtil.writeFileToUM(PATH_TO_UM, caregiverToSend.getExternalID(), getRefNr(), "ADR", first8NumbersOfrizivFromCaregiverToSend);
     }
 
     @Override

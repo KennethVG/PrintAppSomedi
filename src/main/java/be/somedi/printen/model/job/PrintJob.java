@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
-import javax.transaction.Transactional;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.IOException;
@@ -147,7 +146,7 @@ public class PrintJob {
         if (sendToUmJob.formatAndSend(caregiverToPrint, path)) {
             LOGGER.debug(path + "  verzenden naar UM is gelukt!");
 
-            if (!caregiverToPrint.getCopyToExternalID().equalsIgnoreCase("NULL")) {
+            if(caregiverToPrint.getCopyToExternalID() != null){
                 ExternalCaregiver caregiverToSendCopy = service.findByMnemonic(caregiverToPrint.getCopyToExternalID());
                 LOGGER.info("CaregiverToSendCopy: " + caregiverToSendCopy);
                 if (sendToUmJob.formatAndSend(caregiverToSendCopy, path)) {
@@ -166,7 +165,6 @@ public class PrintJob {
                     }
                 }
             }
-
         } else {
             LOGGER.debug(path + " verzenden naar UM is NIET gelukt!");
         }

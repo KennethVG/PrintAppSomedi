@@ -1,6 +1,5 @@
 package be.somedi.printen.util;
 
-import be.somedi.printen.model.job.PrintJob;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +18,7 @@ public class IOUtil {
         Path path = null;
         try {
             path = Files.write(Paths.get(pathToError + "\\" + FilenameUtils.getBaseName(pathToTxt.toString()) + ".err"), errormessage.getBytes());
+            LOGGER.debug("Created error file: " + path);
         } catch (IOException e) {
             e.printStackTrace();
         }
