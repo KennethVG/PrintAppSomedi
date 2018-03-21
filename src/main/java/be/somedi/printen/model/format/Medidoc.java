@@ -2,6 +2,7 @@ package be.somedi.printen.model.format;
 
 import be.somedi.printen.entity.ExternalCaregiver;
 import be.somedi.printen.entity.Person;
+import be.somedi.printen.model.UMFormat;
 import be.somedi.printen.service.ExternalCaregiverService;
 import be.somedi.printen.service.PatientService;
 import be.somedi.printen.service.PersonService;
@@ -102,10 +103,9 @@ public class Medidoc extends BaseFormat {
         result.append("!Onderzoek").append("\n");
 
         //LINE3: uitslag (Max. 75 karakters per lijn, ] = BESLUIT)
-        result.append("Geachte collega,").append("\n\n");
-        result.append(TxtUtil.getBodyOfTxt(getPathToTxt())).append("\n")
-                .append(specialistOfSomedi.getFirstName()).append(" ")
-                .append(specialistOfSomedi.getLastName()).append("\n");
+        result.append(buildStart())
+                .append(TxtUtil.getBodyOfTxt(getPathToTxt(), UMFormat.MEDIDOC)).append("\n\n")
+                .append(buildEnd());
 
         //EINDE:
         result.append("#R/").append("\n").append("#A/");

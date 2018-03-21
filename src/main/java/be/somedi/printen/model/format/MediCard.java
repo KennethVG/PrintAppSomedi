@@ -1,6 +1,7 @@
 package be.somedi.printen.model.format;
 
 import be.somedi.printen.entity.ExternalCaregiver;
+import be.somedi.printen.model.UMFormat;
 import be.somedi.printen.service.ExternalCaregiverService;
 import be.somedi.printen.service.PatientService;
 import be.somedi.printen.service.PersonService;
@@ -54,10 +55,10 @@ public class MediCard extends BaseFormat {
                 .append(line()).append("\n\n");
 
         // Lijn 21 tem eind: protocol
-        result.append("Geachte collega,").append("\n\n")
-                .append(getBodyOfTxt(getPathToTxt())).append("\n")
-                .append(specialistOfSomedi.getTitle()).append(" ").append(specialistOfSomedi.getLastName()).append(" ").append(specialistOfSomedi.getFirstName()).append("\n\n")
-                .append("VOLLEDIG PROTOCOL");
+        result.append(buildStart())
+                .append(getBodyOfTxt(getPathToTxt(), UMFormat.MEDICARD)).append("\n\n")
+                .append(buildEnd())
+                .append("\nVOLLEDIG PROTOCOL");
 
         return result.toString();
     }

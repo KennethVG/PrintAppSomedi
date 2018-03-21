@@ -2,6 +2,7 @@ package be.somedi.printen.model.format;
 
 import be.somedi.printen.entity.ExternalCaregiver;
 import be.somedi.printen.entity.Person;
+import be.somedi.printen.model.UMFormat;
 import be.somedi.printen.service.ExternalCaregiverService;
 import be.somedi.printen.service.PatientService;
 import be.somedi.printen.service.PersonService;
@@ -39,20 +40,20 @@ public class Medar extends BaseFormat {
 
         // HEADING
         result.appendFixedWidthPadRight("/FROM", 10, ' ').append(": ")
-                .appendWithSeparators(specialistIds, "|").appendNewLine()
+                .appendWithSeparators(specialistIds, "|").append("\n")
                 .appendFixedWidthPadRight("/TO", 10, ' ').append(": ")
-                .appendWithSeparators(specialistToSendIds, "|").appendNewLine()
+                .appendWithSeparators(specialistToSendIds, "|").append("\n")
                 .appendFixedWidthPadRight("/SUBJECT", 10, ' ').append(": ")
-                .appendWithSeparators(patientIds, "|").appendNewLine()
+                .appendWithSeparators(patientIds, "|").append("\n")
                 .appendFixedWidthPadRight("/INFO", 10, ' ').append(": ")
-                .appendWithSeparators(info, "|").appendNewLine().appendNewLine();
+                .appendWithSeparators(info, "|").append("\n\n");
 
         // BODY
-        result.append("/TITLE Raadpleging ").append(specialist.getTitle()).append(" ").append(specialist.getLastName()).appendNewLine()
-                .append("/DATE ").append(formatDate()).appendNewLine().append("Geachte collega,\n\n")
-                .append("/DESCR").appendNewLine().append(getBodyOfTxt(getPathToTxt())).appendNewLine()
-                .append("/END").appendNewLine()
-                .append(specialist.getTitle()).append(" ").append(specialist.getLastName()).append(" ").append(specialist.getFirstName()).appendNewLine();
+        result.append("/TITLE Raadpleging ").append(specialist.getTitle()).append(" ").append(specialist.getLastName()).append("\n")
+                .append("/DATE ").append(formatDate()).append("\n").append(buildStart())
+                .append("/DESCR").append("\n").append(getBodyOfTxt(getPathToTxt(), UMFormat.MEDAR)).append("\n")
+                .append("/END").append("\n")
+                .append(buildEnd());
 
 
         return result.toString();

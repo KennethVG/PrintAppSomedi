@@ -66,7 +66,7 @@ public class MedidocTest {
                 "aangemaakt?\n" +
                 "\n" +
                 "Met vriendelijke groeten,\n" +
-                "Greet Vantrappen\n" +
+                "Dr. Vantrappen Greet\n" +
                 "#R/\n" +
                 "#A/\n" +
                 "#/34", fullDoc);

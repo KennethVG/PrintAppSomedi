@@ -32,8 +32,27 @@ public class MedarTest {
 
     @Test
     public void buildDocument() {
-
         String fullDoc = medar.buildDocument();
-        assertEquals("", fullDoc);
+        assertEquals("/FROM     : Vantrappen|Prins de Lignestr 1 B0101|3001|Heverlee||1/06979/12/414\n" +
+                "/TO       : Vekemans|Hoogstraat 13|2223|Schriek||1/19564/37/004\n" +
+                "/SUBJECT  : Theodora|Van Hool|Dr.J.Vermylenstraat 14|2223|Schriek|19540630|V\n" +
+                "/INFO     : Created on 21/03/2018|MDR182670160\n" +
+                "\n" +
+                "/TITLE Raadpleging Dr. Vantrappen\n" +
+                "/DATE 21/03/2018\n" +
+                "Geachte collega,\n" +
+                "\n" +
+                "/DESCR\n" +
+                "Betreft : uw patiënt(e) Van Hool Theodora geboren op 30/06/1954 \n" +
+                " en wonende Dr.J.Vermylenstraat 14 te 2223 Schriek. \n" +
+                "\n" +
+                " Consultatie : 04/01/2018 met referentienr : 182670160 \n" +
+                "\n" +
+                "\n" +
+                "Deze brief zou ook naar Jamar moete gaan. Wordt hier aparte XML voor \n" +
+                "aangemaakt?\n" +
+                "/END\n" +
+                "Met vriendelijke groeten,\n" +
+                "Dr. Vantrappen Greet\n", fullDoc);
     }
 }

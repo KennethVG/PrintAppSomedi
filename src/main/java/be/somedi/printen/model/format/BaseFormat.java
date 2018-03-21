@@ -85,5 +85,14 @@ public abstract class BaseFormat {
         return IOUtil.writeFileToUM(pathToUm, caregiverToSend.getExternalID(), getRefNr(), "ADR", first8NumbersOfrizivFromCaregiverToSend);
     }
 
+    public String buildStart(){
+        return "Geachte collega,\n\n";
+    }
+
+    public String buildEnd(){
+        return "Met vriendelijke groeten,\n" + getSpecialistOfSomedi().getTitle() + " " + getSpecialistOfSomedi()
+                .getLastName() + " " + getSpecialistOfSomedi().getFirstName() + "\n";
+    }
+
     public abstract String buildDocument();
 }

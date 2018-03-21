@@ -1,5 +1,6 @@
 package be.somedi.printen.util;
 
+import be.somedi.printen.model.UMFormat;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
@@ -47,7 +48,7 @@ public class TxtUtilTest {
     public void testGetBody() throws IOException {
         ClassPathResource txtFile = new ClassPathResource("print.txt");
         Path path = txtFile.getFile().toPath();
-        String result = TxtUtil.getBodyOfTxt(path);
+        String result = TxtUtil.getBodyOfTxt(path, UMFormat.MEDIDOC);
         assertFalse(result.isEmpty());
 
         String expected = "Betreft : uw pati~ent(e) Florentie Agnes geboren op 30/07/1950   en wonende\n" +
@@ -58,9 +59,7 @@ public class TxtUtilTest {
                 "* BESPREKING:\n" +
                 "Gunstige evolutie.\n" +
                 "Pati~ente mag progressief haar activiteiten opdrijven. Dit is normaal dat\n" +
-                " zij\n" +
-                "\n" +
-                "Met vriendelijke groeten,";
+                " zij";
 
         assertEquals(expected, result);
     }
@@ -69,7 +68,7 @@ public class TxtUtilTest {
     public void testGetBodyWithLongLine() throws IOException {
         ClassPathResource txtFile = new ClassPathResource("MSE_182670160_2976684_A9564.txt");
         Path path = txtFile.getFile().toPath();
-        String result = TxtUtil.getBodyOfTxt(path);
+        String result = TxtUtil.getBodyOfTxt(path, UMFormat.MEDIDOC);
         String expected = "Betreft : uw patiënt(e) Van Hool Theodora geboren op 30/06/1954 \n" +
                 " en wonende Dr.J.Vermylenstraat 14 te 2223 Schriek. \n" +
                 "\n" +
@@ -77,17 +76,15 @@ public class TxtUtilTest {
                 "\n" +
                 "\n" +
                 "Deze brief zou ook naar Jamar moete gaan. Wordt hier aparte XML voor \n" +
-                "aangemaakt?\n" +
-                "\n" +
-                "Met vriendelijke groeten,";
+                "aangemaakt?";
         assertEquals(expected, result);
     }
 
     @Test
-    public void testGetBodyWithSummary() throws IOException {
+    public void testGetBodyWithSummaryMedidoc() throws IOException {
         ClassPathResource txtFile = new ClassPathResource("besluit.txt");
         Path path = txtFile.getFile().toPath();
-        String result = TxtUtil.getBodyOfTxt(path);
+        String result = TxtUtil.getBodyOfTxt(path, UMFormat.MEDIDOC);
         String expected = "Betreft :Â uw patiÃ«nt(e) Van Vliet Alexandra geboren op 11/10/2006Â   en\n" +
                 " wonende\n" +
                 "Kerkhofstraat 43 te 2220 Heist-op-den-Berg.Â \n" +
@@ -108,17 +105,44 @@ public class TxtUtilTest {
                 "]blablablabla\n" +
                 "]blablablablablablablablablablablablabla blablablablablablablablablabl\n" +
                 "] ablablablablablablablablabl ablablablablablablab labla\n" +
-                "]Einde besluit\n" +
-                "\n" +
-                "Met vriendelijke groeten,";
+                "]Einde besluit";
         assertEquals(expected, result);
     }
 
     @Test
-    public void testGetBodyWithLongSummary() throws IOException {
+    public void testGetBodyWithSummaryMedar() throws IOException {
+        ClassPathResource txtFile = new ClassPathResource("besluit.txt");
+        Path path = txtFile.getFile().toPath();
+        String result = TxtUtil.getBodyOfTxt(path, UMFormat.MEDAR);
+        assertEquals("Betreft :Â uw patiÃ«nt(e) Van Vliet Alexandra geboren op 11/10/2006Â   en\n" +
+                " wonende\n" +
+                "Kerkhofstraat 43 te 2220 Heist-op-den-Berg.Â \n" +
+                "\n" +
+                " Consultatie : 04/01/2018 met referentienr : 182670181\n" +
+                "\n" +
+                "* ANAMNESE:\n" +
+                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
+                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
+                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
+                "\n" +
+                " * klinisch onderzoekklinisch onderzoek\n" +
+                "\n" +
+                "/CONCL\n" +
+                " * BESLUIT:\n" +
+                " blablablabla\n" +
+                " blablablablablablablablablablablablabla blablablablablablablablablabl\n" +
+                " ablablablablablablablablabl ablablablablablablab labla\n" +
+                " Einde besluit", result);
+    }
+
+    @Test
+    public void testGetBodyWithLongSummaryMedidoc() throws IOException {
         ClassPathResource txtFile = new ClassPathResource("langBesluit.txt");
         Path path = txtFile.getFile().toPath();
-        String result = TxtUtil.getBodyOfTxt(path);
+        String result = TxtUtil.getBodyOfTxt(path, UMFormat.MEDIDOC);
         String expected = "Betreft :Â uw patiÃ«nt(e) Van Vliet Alexandra geboren op 11/10/2006Â   en\n" +
                 " wonende\n" +
                 "Kerkhofstraat 43 te 2220 Heist-op-den-Berg.Â \n" +
@@ -145,10 +169,7 @@ public class TxtUtilTest {
                 "]heel\n" +
                 " lang\n" +
                 " besluit. OK!\n" +
-                " Einde besluit\n" +
-                "\n" +
-                "\n" +
-                "Met vriendelijke groeten,";
+                " Einde besluit";
         assertEquals(expected, result);
     }
 
