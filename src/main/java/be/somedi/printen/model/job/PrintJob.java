@@ -2,6 +2,7 @@ package be.somedi.printen.model.job;
 
 import be.somedi.printen.entity.ExternalCaregiver;
 import be.somedi.printen.service.ExternalCaregiverService;
+import be.somedi.printen.service.LinkedExternalCargiverService;
 import be.somedi.printen.util.IOUtil;
 import be.somedi.printen.util.TxtUtil;
 import org.apache.commons.io.FilenameUtils;
@@ -31,6 +32,7 @@ public class PrintJob {
     private Path PATH_TO_ERROR;
 
     private final ExternalCaregiverService service;
+    private final LinkedExternalCargiverService linkedExternalCargiverService;
     private final SendToUmJob sendToUmJob;
 
     private WatchService watchService;
@@ -38,8 +40,10 @@ public class PrintJob {
     private static final Logger LOGGER = LoggerFactory.getLogger(PrintJob.class);
 
     @Autowired
-    public PrintJob(ExternalCaregiverService service, SendToUmJob sendToUmJob) {
+    public PrintJob(ExternalCaregiverService service, LinkedExternalCargiverService linkedExternalCargiverService,
+                    SendToUmJob sendToUmJob) {
         this.service = service;
+        this.linkedExternalCargiverService = linkedExternalCargiverService;
         this.sendToUmJob = sendToUmJob;
     }
 
@@ -147,32 +151,20 @@ public class PrintJob {
         return true;
     }
 
-    //TODO: refactor
     private void sendToUM(ExternalCaregiver caregiverToPrint, Path path) {
-        if (sendToUmJob.formatAndSend(caregiverToPrint, path)) {
+        if(sendToUmJob.formatAndSend(caregiverToPrint, path)){
             LOGGER.debug(path + "  verzenden naar UM is gelukt!");
 
-            if (caregiverToPrint.getCopyToExternalID() != null) {
-                ExternalCaregiver caregiverToSendCopy = service.findByMnemonic(caregiverToPrint.getCopyToExternalID());
-                LOGGER.info("CaregiverToSendCopy: " + caregiverToSendCopy);
-                if (sendToUmJob.formatAndSend(caregiverToSendCopy, path)) {
-                    LOGGER.debug(path + "  CaregiverToSendCopy verzenden naar UM is gelukt!");
-                } else {
-                    LOGGER.debug(path + " CaregiverToSendCopy verzenden naar UM is NIET gelukt!");
-                }
-
-                while (!caregiverToSendCopy.getCopyToExternalID().equalsIgnoreCase("NULL")) {
-                    caregiverToSendCopy = service.findByMnemonic(caregiverToSendCopy.getCopyToExternalID());
-                    LOGGER.info("Another CaregiverToSendCopy: " + caregiverToSendCopy);
-                    if (sendToUmJob.formatAndSend(caregiverToSendCopy, path)) {
-                        LOGGER.debug(path + "  Another CaregiverToSendCopy verzenden naar UM is gelukt!");
-                    } else {
-                        LOGGER.debug(path + " Another CaregiverToSendCopy verzenden naar UM is NIET gelukt!");
-                    }
+            String externalId = caregiverToPrint.getExternalID();
+            String linkedId = linkedExternalCargiverService.findLinkedIdByExternalId(externalId);
+            if(linkedId != null){
+                ExternalCaregiver caregiverToSendCopy = service.findByMnemonic(linkedId);
+                if(sendToUmJob.formatAndSend(caregiverToSendCopy, path)){
+                    LOGGER.debug(path + " copy verzenden naar UM is gelukt!");
                 }
             }
         } else {
-            LOGGER.debug(path + " verzenden naar UM is NIET gelukt!");
+            LOGGER.warn(path + " verzenden naar UM is NIET gelukt!");
         }
     }
 

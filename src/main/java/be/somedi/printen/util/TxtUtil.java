@@ -37,7 +37,7 @@ public class TxtUtil {
     private static final int CONSULTID_MAX_LENGTH = 15;
     private static final int SUMMARY_MAX_LENGTH = 7;
 
-    public static final String CHARSET_NAME = "Cp1252";
+    private static final String CHARSET_NAME = "Cp1252";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TxtUtil.class);
 
