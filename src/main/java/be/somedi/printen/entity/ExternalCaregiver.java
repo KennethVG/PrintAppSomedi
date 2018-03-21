@@ -5,7 +5,7 @@ import be.somedi.printen.model.UMFormat;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "externalcaregiver")
+@Table(name = "dbo.Communication_ExternalCaregiver")
 public class ExternalCaregiver {
 
     @Id
@@ -20,8 +20,10 @@ public class ExternalCaregiver {
     private String city;
     private String streetWithNumber;
     private String phone;
+    private String title;
     private Boolean printProtocols;
     private String copyToExternalID;
+    private String nihiiAddress;
 
     @Enumerated(EnumType.STRING)
     private UMFormat format;
@@ -62,6 +64,10 @@ public class ExternalCaregiver {
         return phone;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public Boolean getPrintProtocols() {
         return printProtocols;
     }
@@ -72,6 +78,10 @@ public class ExternalCaregiver {
 
     public String getCopyToExternalID() {
         return copyToExternalID;
+    }
+
+    public String getNihiiAddress() {
+        return nihiiAddress;
     }
 
     public UMFormat getFormat() {
@@ -90,9 +100,11 @@ public class ExternalCaregiver {
                 ", city='" + city + '\'' +
                 ", streetWithNumber='" + streetWithNumber + '\'' +
                 ", phone='" + phone + '\'' +
+                ", title='" + title + '\'' +
                 ", printProtocols=" + printProtocols +
                 ", copyToExternalID='" + copyToExternalID + '\'' +
-                ", format='" + format + '\'' +
+                ", nihiiAddress='" + nihiiAddress + '\'' +
+                ", format=" + format +
                 '}';
     }
 }

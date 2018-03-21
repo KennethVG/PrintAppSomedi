@@ -1,0 +1,31 @@
+#DR A9564
+#PR 182670160
+#PC V-493201
+#PN Van Hool
+#PV Theodora
+#PS Dr.J.Vermylenstraat 14
+#PP 2223
+#PA Schriek
+#PD 30061954
+#PG F
+#UA A6979
+#UD 04012018
+Aan Dr. Vekemans Helga
+Hoogstraat 13
+2223 Schriek
+
+
+Geachte collega,
+
+
+Betreft : uw patiënt(e) Van Hool Theodora geboren op 30/06/1954 
+ en wonende Dr.J.Vermylenstraat 14 te 2223 Schriek. 
+
+ Consultatie : 04/01/2018 met referentienr : 182670160 
+
+
+Deze brief zou ook naar Jamar moete gaan. Wordt hier aparte XML voor 
+aangemaakt?
+
+Met vriendelijke groeten,
+ Dr. Greet Vantrappen 

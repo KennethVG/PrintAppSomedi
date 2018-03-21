@@ -1,42 +1,23 @@
 package be.somedi.printen.model.format;
 
 import be.somedi.printen.entity.ExternalCaregiver;
-import be.somedi.printen.entity.Patient;
 import be.somedi.printen.entity.Person;
 import be.somedi.printen.service.ExternalCaregiverService;
 import be.somedi.printen.service.PatientService;
 import be.somedi.printen.service.PersonService;
-import be.somedi.printen.util.IOUtil;
 import be.somedi.printen.util.TxtUtil;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 
 import static be.somedi.printen.util.FormatUtil.*;
-import static be.somedi.printen.util.TxtUtil.countNumberOfLines;
+import static be.somedi.printen.util.TxtUtil.*;
 
 @Component
 public class Medidoc extends BaseFormat {
 
-    private static final int NUMBER_OF_RIZIV = 8;
-
-    @Value("${path-um}")
-    private Path PATH_TO_UM;
-
     public Medidoc(ExternalCaregiverService externalCaregiverService, PatientService patientService, PersonService personService) {
         super(externalCaregiverService, patientService, personService);
-    }
-
-    public Path makeRepFile(ExternalCaregiver caregiverToSend) {
-        return IOUtil.writeFileToUM(PATH_TO_UM, caregiverToSend.getExternalID(), getRefNr(), "REP", buildDocument());
-    }
-
-    public Path makeAdrFile(ExternalCaregiver caregiverToSend) {
-        String first8NumbersOfrizivFromCaregiverToSend = StringUtils.left(caregiverToSend.getNihii(), NUMBER_OF_RIZIV);
-        return IOUtil.writeFileToUM(PATH_TO_UM, caregiverToSend.getExternalID(), getRefNr(), "ADR", first8NumbersOfrizivFromCaregiverToSend);
     }
 
     @Override
@@ -50,15 +31,15 @@ public class Medidoc extends BaseFormat {
     private String buildHeading() {
 
         StringBuilder result = new StringBuilder();
-        ExternalCaregiver externalCaregiver = getExternalCaregiver();
+        ExternalCaregiver specialistOfSomedi = getSpecialistOfSomedi();
         ExternalCaregiver caregiverToSendLetter = getCaregiverToSendLetter();
 
         // LINE1: rizivNr (Format: C/CCCCC/CC/CCC) :
-        result.append(formatRiziv(externalCaregiver.getNihii())).append("\n");
+        result.append(formatRiziv(specialistOfSomedi.getNihii())).append("\n");
 
         // LINE2: naam (24 karakters) en voornaam (Max. 16 karakters)
-        result.append(formatStringWithBlanks(externalCaregiver.getLastName(), 24));
-        result.append(formatStringWithMaxChars(externalCaregiver.getFirstName(), 16)).append("\n");
+        result.append(formatStringWithBlanks(specialistOfSomedi.getLastName(), 24));
+        result.append(formatStringWithMaxChars(specialistOfSomedi.getFirstName(), 16)).append("\n");
 
         // LINE3: Straat (35 karakters) en nummer (Max. 10 karakters)
         result.append("P.A. Liersesteenweg                ").append("267").append("\n");
@@ -67,7 +48,7 @@ public class Medidoc extends BaseFormat {
         result.append("2220          ").append("Heist-op-den-Berg").append("\n");
 
         //LINE5: Telefoon - fax (Vrij Max. 50 karakters)
-        result.append(formatStringWithMaxChars(externalCaregiver.getPhone(), 50)).append("\n").append("\n");
+        result.append(formatStringWithMaxChars(specialistOfSomedi.getPhone(), 50)).append("\n").append("\n");
 
         // LINE7: Datum (Format: JJMMDDHHMM)
         result.append(formatDateAndTime(LocalDateTime.now())).append("\n");
@@ -85,9 +66,7 @@ public class Medidoc extends BaseFormat {
     private String buildHeadingLetter() {
 
         StringBuilder result = new StringBuilder();
-        String externalId = TxtUtil.getExternalIdAfterPC(getPathToTxt());
-        Patient patient = getPatientService().findByExternalId(externalId);
-        Person person = getPersonService().findById((long) patient.getPersonId());
+        Person person = getPatientDetails();
 
         //LINE1: Aanduiding (Format: #ArrnPatiënt)
         result.append("#A").append(person.getInss()).append("\n");
@@ -96,14 +75,14 @@ public class Medidoc extends BaseFormat {
         result.append(formatStringWithBlanks(TxtUtil.getNameAfterPN(getPathToTxt()), 24));
         result.append(formatStringWithMaxChars(TxtUtil.getFirstNameAfterPV(getPathToTxt()), 16)).append("\n");
 
-        //LINE3: Geboortedatum patiënt (Format: JJMMDD)
-        result.append(formatDate(TxtUtil.getBirthDateAtferPD(getPathToTxt()))).append("\n");
+        //LINE3: Geboortedatum patiënt (Format: JJJJMMDD)
+        result.append(formatDate(TxtUtil.getBirthDateAtferPD(getPathToTxt()), "yyyyMMdd")).append("\n");
 
         //LINE4: Geslacht patient (X (vrouwelijk), Y (mannelijk), Z(onbepaald))
-        result.append(formatGender(externalId)).append("\n");
+        result.append(formatGender(getExternalIdAfterPC(getPathToTxt())).getMedidocGender()).append("\n");
 
         //LINE5: Datum aanvraag onderzoek
-        result.append(formatDate(TxtUtil.getDateOfResearchAfterUD(getPathToTxt()))).append("\n");
+        result.append(formatDate(getDateOfResearchAfterUD(getPathToTxt()), "yyyyMMdd")).append("\n");
 
         //LINE6: RefNr (14 karakters)
         result.append(formatStringWithBlanks(getRefNr(), 14)).append("\n").append("\n");
@@ -113,19 +92,20 @@ public class Medidoc extends BaseFormat {
 
     private String buildBody() {
         StringBuilder result = new StringBuilder();
+        ExternalCaregiver specialistOfSomedi = getSpecialistOfSomedi();
 
         //LINE1: Aanduiding begin resultaat
         result.append("#Rb").append("\n");
 
         //LINE2: Identificatie van de analyse
-        //Todo: Willy vragen
+        //Todo: Dienst van arts
         result.append("!Onderzoek").append("\n");
 
         //LINE3: uitslag (Max. 75 karakters per lijn, ] = BESLUIT)
         result.append("Geachte collega,").append("\n\n");
         result.append(TxtUtil.getBodyOfTxt(getPathToTxt())).append("\n")
-                .append(getExternalCaregiver().getFirstName()).append(" ")
-                .append(getExternalCaregiver().getLastName()).append("\n");
+                .append(specialistOfSomedi.getFirstName()).append(" ")
+                .append(specialistOfSomedi.getLastName()).append("\n");
 
         //EINDE:
         result.append("#R/").append("\n").append("#A/");

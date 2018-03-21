@@ -55,8 +55,10 @@ public class PrintJob {
 
     public void stopPrintJob() {
         try {
-            watchService.close();
+            if (watchService != null)
+                watchService.close();
         } catch (IOException e) {
+            e.printStackTrace();
             LOGGER.error(e.getMessage());
         }
     }
@@ -68,9 +70,11 @@ public class PrintJob {
                     .filter(path -> StringUtils.endsWith(path.toString(), ".txt"))
                     .filter(path -> {
                         if (isPrintAndSendJobSucceeded(path)) {
-                            return IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + path.getFileName()));
+                            return IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + path.getFileName
+                                    ()));
                         } else
-                            return IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + path.getFileName()));
+                            return IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + path.getFileName
+                                    ()));
                     }).count();
 
         } catch (IOException e) {
@@ -117,7 +121,9 @@ public class PrintJob {
     private boolean isPrintAndSendJobSucceeded(Path path) {
         String errorMessage;
         if (TxtUtil.isPathWithLetterNotToPrint(path)) {
-            errorMessage = "Deze brief bevat vul_aan, P.N. of een ander woord waardoor de brief niet verzonden hoeft te worden";
+            LOGGER.debug(path + " write error file");
+            errorMessage = "Deze brief bevat vul_aan, P.N. of een ander woord waardoor de brief niet verzonden hoeft " +
+                    "te worden";
             IOUtil.writeFileToError(PATH_TO_ERROR, path, errorMessage);
             return false;
         }
@@ -125,7 +131,7 @@ public class PrintJob {
         LOGGER.info("CaregiverToPrint: " + caregiverToPrint);
         if (null != caregiverToPrint) {
             // SEND TO UM:
-           sendToUM(caregiverToPrint, path);
+            sendToUM(caregiverToPrint, path);
 
             if (null != caregiverToPrint.getPrintProtocols() && caregiverToPrint.getPrintProtocols()) {
                 String fileToPrint = FilenameUtils.getBaseName(path.toString()).replace("MSE", "PDF");
@@ -142,11 +148,11 @@ public class PrintJob {
     }
 
     //TODO: refactor
-    private void sendToUM(ExternalCaregiver caregiverToPrint, Path path ){
+    private void sendToUM(ExternalCaregiver caregiverToPrint, Path path) {
         if (sendToUmJob.formatAndSend(caregiverToPrint, path)) {
             LOGGER.debug(path + "  verzenden naar UM is gelukt!");
 
-            if(caregiverToPrint.getCopyToExternalID() != null){
+            if (caregiverToPrint.getCopyToExternalID() != null) {
                 ExternalCaregiver caregiverToSendCopy = service.findByMnemonic(caregiverToPrint.getCopyToExternalID());
                 LOGGER.info("CaregiverToSendCopy: " + caregiverToSendCopy);
                 if (sendToUmJob.formatAndSend(caregiverToSendCopy, path)) {

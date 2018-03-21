@@ -12,48 +12,48 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
-import static be.somedi.printen.util.FormatUtil.formatDateAndTime;
 import static org.junit.Assert.assertEquals;
-
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = PrintAppApplication.class)
 @TestPropertySource({"/application.properties", "/application-dev.properties", "/path-dev.properties"})
 @ActiveProfiles("dev")
-public class MedidocTest {
+public class MediCardTest {
 
     @Autowired
-    private BaseFormat medidoc;
+    private BaseFormat mediCard;
 
     @Before
     public void init() throws IOException {
         ClassPathResource txtFile = new ClassPathResource("MSE_182670160_2976684_A9564.txt");
-        medidoc.setPathToTxt(txtFile.getFile().toPath());
+        mediCard.setPathToTxt(txtFile.getFile().toPath());
     }
 
     @Test
-    public void buildDocument(){
-        String fullDoc = medidoc.buildDocument();
-        assertEquals("1/06979/12/414\n" +
-                "Vantrappen              Greet\n" +
-                "P.A. Liersesteenweg                267\n" +
-                "2220          Heist-op-den-Berg\n" +
-                "016/236904\n" +
+    public void buildDocument() {
+
+        String fullDoc = mediCard.buildDocument();
+        assertEquals("PROTO BEGIN\n" +
                 "\n" +
-                formatDateAndTime(LocalDateTime.now()) + "\n" +
-                "1/19564/37/004\n" +
-                "Vekemans                Helga\n" +
-                "#A54063027006\n" +
-                "Van Hool                Theodora\n" +
-                "19540630\n" +
-                "X\n" +
-                "20180104\n" +
-                "182670160     \n" +
+                "SOMEDI C.V.B.A.\n" +
+                "Liersesteenweg 267\n" +
+                "2220 Heist-op-den-Berg\n" +
+                "Tel.: 015/25.89.11\n" +
                 "\n" +
-                "#Rb\n" +
-                "!Onderzoek\n" +
+                "21/03/2018                    R182670160\n" +
+                "          Vantrappen Greet\n" +
+                "\n" +
+                "          Van Hool,Theodora\n" +
+                "          Dr.J.Vermylenstraat 14\n" +
+                "          2223 Schriek\n" +
+                "          V               30/06/1954\n" +
+                "\n" +
+                "\n" +
+                "--------------------------------------------------------------------------------\n" +
+                "Dr. Vantrappen Greet\n" +
+                "--------------------------------------------------------------------------------\n" +
+                "\n" +
                 "Geachte collega,\n" +
                 "\n" +
                 "Betreft : uw patiënt(e) Van Hool Theodora geboren op 30/06/1954 \n" +
@@ -66,10 +66,8 @@ public class MedidocTest {
                 "aangemaakt?\n" +
                 "\n" +
                 "Met vriendelijke groeten,\n" +
-                "Greet Vantrappen\n" +
-                "#R/\n" +
-                "#A/\n" +
-                "#/34", fullDoc);
-
+                "Dr. Vantrappen Greet\n" +
+                "\n" +
+                "VOLLEDIG PROTOCOL", fullDoc);
     }
 }

@@ -14,12 +14,20 @@ public class FormatUtil {
                 StringUtils.substring(riziv, 6, 8) + "/" + StringUtils.right(riziv, 3);
     }
 
-    public static String formatStringWithBlanks(String externalCaregiverField, int numberOfCharacters) {
-        StringBuilder result = new StringBuilder(externalCaregiverField);
-        for (int i = externalCaregiverField.length(); i < numberOfCharacters; i++) {
+    public static String formatStringWithBlanks(String field, int numberOfCharacters) {
+        StringBuilder result = new StringBuilder(field);
+        for (int i = field.length(); i < numberOfCharacters; i++) {
             result.append(" ");
         }
         return result.toString();
+    }
+
+    public static String formatBlanksBeforeString(int numberOfBlanks, String field){
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < numberOfBlanks; i++) {
+            result.append(" ");
+        }
+        return result.append(field).toString();
     }
 
     public static String formatStringWithMaxChars(String externalCaregiverField, int maxChars) {
@@ -27,23 +35,29 @@ public class FormatUtil {
     }
 
     public static String formatDateAndTime(LocalDateTime ldt) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMddHHmm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
         return formatter.format(ldt);
     }
 
-    public static String formatDate(String date) {
+    public static String formatDate(String date, String pattern) {
         DateTimeFormatter stringDateFormat = DateTimeFormatter.ofPattern("ddMMyyyy");
         LocalDate ld = LocalDate.parse(date, stringDateFormat);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMdd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
         return formatter.format(ld);
     }
 
-    public static String formatGender(String externalId) {
+    public static String formatDate(){
+        LocalDate now = LocalDate.now();
+        DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return outputFormat.format(now);
+    }
+
+    public static Gender formatGender(String externalId) {
         if (externalId.startsWith("M")) {
-            return Gender.MALE.getAbbreviation();
+            return Gender.M;
         } else if (externalId.startsWith("V")) {
-            return Gender.FEMALE.getAbbreviation();
+            return Gender.V;
         }
-        return Gender.UNDEFINED.getAbbreviation();
+        return Gender.U;
     }
 }

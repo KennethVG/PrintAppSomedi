@@ -6,8 +6,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -36,30 +36,30 @@ public class TxtUtil {
     private static final int CONSULTID_MAX_LENGTH = 15;
     private static final int SUMMARY_MAX_LENGTH = 7;
 
+    public static final String CHARSET_NAME ="Cp1252";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TxtUtil.class);
 
     public static boolean isPathWithLetterNotToPrint(Path pathToTxt) {
         boolean toPrint = false;
-
-        try (BufferedReader bufferedReader = Files.newBufferedReader(pathToTxt)) {
-
-            String lineWithConsultId = bufferedReader.lines().filter(line -> line.trim().toUpperCase().startsWith(PR)
+        try {
+            String lineWithConsultId = Files.lines(pathToTxt, Charset.forName(CHARSET_NAME)).filter(line -> line.trim().toUpperCase()
+                    .startsWith(PR)
             ).findFirst().orElseThrow(RuntimeException::new);
+
+            LOGGER.debug("Line with PR= " + lineWithConsultId);
+
             if (lineWithConsultId.length() > CONSULTID_MAX_LENGTH) {
                 LOGGER.info(PR + " of " + pathToTxt.getFileName() + " is groter dan 15 --> NIET PRINTEN!");
                 return true;
             }
 
-            String currentLine;
-            while ((currentLine = bufferedReader.readLine()) != null) {
-                String finalCurrentLine = currentLine.trim();
-                toPrint = Stream.of(DeleteItems.values()).anyMatch(deleteItems -> finalCurrentLine.contains
-                        (deleteItems.getText()) || deleteItems.getText().equalsIgnoreCase(finalCurrentLine));
-                if (toPrint) {
-                    return true;
-                }
-            }
+            long count = Files.lines(pathToTxt, Charset.forName(CHARSET_NAME)).filter(line -> Stream.of(DeleteItems.values()).anyMatch(deleteItems -> line.contains
+                    (deleteItems.getText()) || deleteItems.getText().equalsIgnoreCase(line))).count();
+            toPrint = count > 0;
+
         } catch (IOException e) {
+            e.printStackTrace();
             LOGGER.error(e.getMessage());
         }
         return toPrint;
@@ -72,7 +72,7 @@ public class TxtUtil {
         int endIndex = 0;
 
         try {
-            List<String> allLines = Files.readAllLines(pathToTxt);
+            List<String> allLines = Files.readAllLines(pathToTxt, Charset.forName(CHARSET_NAME));
             String oneLine;
             for (int i = 0; i < allLines.size(); i++) {
                 oneLine = allLines.get(i).trim();
@@ -89,23 +89,24 @@ public class TxtUtil {
                 // Er is een besluit. Max. 7 lijnen starten met ]
                 if (startSummaryIndex != 0) {
                     result.append(buildBody(startIndex, startSummaryIndex, allLines));
-                    for (int j = startSummaryIndex + 1; j <= endIndex && j< startSummaryIndex + SUMMARY_MAX_LENGTH; j++) {
+                    for (int j = startSummaryIndex + 1; j <= endIndex && j < startSummaryIndex + SUMMARY_MAX_LENGTH;
+                         j++) {
                         oneLine = allLines.get(j).trim();
                         if (oneLine.length() > LINE_LENGTH) {
                             String summary = StringUtils.left(oneLine, LINE_LENGTH_SUMMARY);
                             int summaryIndex = StringUtils.lastIndexOf(summary, " ");
-                            result.append("]").append(summary, 0, summaryIndex).append("\n").append("]").append(StringUtils.substring(oneLine, summaryIndex)).append("\n");
+                            result.append("]").append(summary, 0, summaryIndex).append("\n").append("]").append
+                                    (StringUtils.substring(oneLine, summaryIndex)).append("\n");
                         } else if (oneLine.equals("") || j == endIndex) {
                             result.append(oneLine).append("\n");
                         } else {
                             result.append("]").append(oneLine).append("\n");
                         }
                     }
-                    if(endIndex> startSummaryIndex + SUMMARY_MAX_LENGTH){
+                    if (endIndex > startSummaryIndex + SUMMARY_MAX_LENGTH) {
                         result.append(buildBody(startSummaryIndex + SUMMARY_MAX_LENGTH, endIndex, allLines));
                     }
-                }
-                else {
+                } else {
                     result.append(buildBody(startIndex, endIndex, allLines));
                 }
             }
@@ -172,7 +173,8 @@ public class TxtUtil {
             if (oneLine.length() > LINE_LENGTH) {
                 String first75 = StringUtils.left(oneLine, LINE_LENGTH);
                 int index = StringUtils.lastIndexOf(first75, " ");
-                result.append(StringUtils.substring(first75, 0, index)).append("\n").append(StringUtils.substring(oneLine, index)).append("\n");
+                result.append(StringUtils.substring(first75, 0, index)).append("\n").append(StringUtils.substring
+                        (oneLine, index)).append("\n");
             } else {
                 result.append(oneLine).append("\n");
             }
@@ -183,7 +185,7 @@ public class TxtUtil {
     private static String getTextAfterKeyword(String keyword, Path pathToTxt) {
         String result = "";
         try {
-            String specificLine = Files.lines(pathToTxt).filter(line -> line.trim().toUpperCase().startsWith(keyword))
+            String specificLine = Files.lines(pathToTxt, Charset.forName(CHARSET_NAME)).filter(line -> line.trim().toUpperCase().startsWith(keyword))
                     .findFirst()
                     .orElseThrow(RuntimeException::new);
             result = StringUtils.substring(specificLine, 3).trim();

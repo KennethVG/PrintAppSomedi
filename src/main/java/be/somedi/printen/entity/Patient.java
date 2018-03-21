@@ -3,7 +3,7 @@ package be.somedi.printen.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "patient")
+@Table(name = "dbo.Global_Patient")
 public class Patient {
 
     @Id

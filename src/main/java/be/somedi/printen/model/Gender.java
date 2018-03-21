@@ -2,15 +2,15 @@ package be.somedi.printen.model;
 
 public enum Gender {
 
-    MALE("Y"), FEMALE("X"), UNDEFINED("Z");
+    M("Y"), V("X"), U("Z");
 
-    private final String abbreviation;
+    private final String medidocGender;
 
-    Gender(String abbreviation){
-        this.abbreviation = abbreviation;
+    Gender(String medidocGender){
+        this.medidocGender = medidocGender;
     }
 
-    public String getAbbreviation() {
-        return abbreviation;
+    public String getMedidocGender() {
+        return medidocGender;
     }
 }

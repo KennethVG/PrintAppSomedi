@@ -67,24 +67,17 @@ public class TxtUtilTest {
 
     @Test
     public void testGetBodyWithLongLine() throws IOException {
-        ClassPathResource txtFile = new ClassPathResource("MSE_182670181_2976687_A4407.txt");
+        ClassPathResource txtFile = new ClassPathResource("MSE_182670160_2976684_A9564.txt");
         Path path = txtFile.getFile().toPath();
         String result = TxtUtil.getBodyOfTxt(path);
-        String expected = "Betreft : uw patiënt(e) Van Vliet Alexandra geboren op 11/10/2006   en\n" +
-                " wonende\n" +
-                "Kerkhofstraat 43 te 2220 Heist-op-den-Berg. \n" +
+        String expected = "Betreft : uw patiënt(e) Van Hool Theodora geboren op 30/06/1954 \n" +
+                " en wonende Dr.J.Vermylenstraat 14 te 2223 Schriek. \n" +
                 "\n" +
-                " Consultatie : 04/01/2018 met referentienr : 182670181\n" +
+                " Consultatie : 04/01/2018 met referentienr : 182670160 \n" +
                 "\n" +
-                "* ANAMNESE:\n" +
-                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
-                " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
-                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
-                " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
-                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
-                " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
                 "\n" +
-                " * klinisch onderzoekklinisch onderzoek\n" +
+                "Deze brief zou ook naar Jamar moete gaan. Wordt hier aparte XML voor \n" +
+                "aangemaakt?\n" +
                 "\n" +
                 "Met vriendelijke groeten,";
         assertEquals(expected, result);
@@ -95,18 +88,18 @@ public class TxtUtilTest {
         ClassPathResource txtFile = new ClassPathResource("besluit.txt");
         Path path = txtFile.getFile().toPath();
         String result = TxtUtil.getBodyOfTxt(path);
-        String expected = "Betreft : uw patiënt(e) Van Vliet Alexandra geboren op 11/10/2006   en\n" +
+        String expected = "Betreft :Â uw patiÃ«nt(e) Van Vliet Alexandra geboren op 11/10/2006Â   en\n" +
                 " wonende\n" +
-                "Kerkhofstraat 43 te 2220 Heist-op-den-Berg. \n" +
+                "Kerkhofstraat 43 te 2220 Heist-op-den-Berg.Â \n" +
                 "\n" +
                 " Consultatie : 04/01/2018 met referentienr : 182670181\n" +
                 "\n" +
                 "* ANAMNESE:\n" +
-                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
-                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
-                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
                 "\n" +
                 " * klinisch onderzoekklinisch onderzoek\n" +
@@ -126,18 +119,18 @@ public class TxtUtilTest {
         ClassPathResource txtFile = new ClassPathResource("langBesluit.txt");
         Path path = txtFile.getFile().toPath();
         String result = TxtUtil.getBodyOfTxt(path);
-        String expected = "Betreft : uw patiënt(e) Van Vliet Alexandra geboren op 11/10/2006   en\n" +
+        String expected = "Betreft :Â uw patiÃ«nt(e) Van Vliet Alexandra geboren op 11/10/2006Â   en\n" +
                 " wonende\n" +
-                "Kerkhofstraat 43 te 2220 Heist-op-den-Berg. \n" +
+                "Kerkhofstraat 43 te 2220 Heist-op-den-Berg.Â \n" +
                 "\n" +
                 " Consultatie : 04/01/2018 met referentienr : 182670181\n" +
                 "\n" +
                 "* ANAMNESE:\n" +
-                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
-                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
-                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
                 "\n" +
                 " * klinisch onderzoekklinisch onderzoek\n" +

@@ -17,7 +17,8 @@ public class IOUtil {
     public static Path writeFileToError(Path pathToError, Path pathToTxt, String errormessage) {
         Path path = null;
         try {
-            path = Files.write(Paths.get(pathToError + "\\" + FilenameUtils.getBaseName(pathToTxt.toString()) + ".err"), errormessage.getBytes());
+            path = Files.write(Paths.get(pathToError + "\\" + FilenameUtils.getBaseName(pathToTxt.toString()) + "" +
+                    ".err"), errormessage.getBytes());
             LOGGER.debug("Created error file: " + path);
         } catch (IOException e) {
             e.printStackTrace();
@@ -25,10 +26,23 @@ public class IOUtil {
         return path;
     }
 
-    public static Path writeFileToUM(Path pathToUM, String mnemonic, String refNr, String ext, String text){
+    public static Path writeFileToUM(Path pathToUM, String mnemonic, String refNr, String ext, String text) {
         Path path = null;
         try {
-            path = Files.write(Paths.get(pathToUM + "/HEC_" + mnemonic + "R_" + refNr + "R." + ext), text.getBytes());
+//            ByteBuffer byteBuffer = ByteBuffer.wrap(text.getBytes());
+//            CharBuffer charBuffer = Charset.forName(TxtUtil.CHARSET_NAME).decode(byteBuffer);
+//            byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
+//            path = Files.write(Paths.get(pathToUM + "/HEC_" + mnemonic + "R_" + refNr + "R." + ext), byteBuffer
+//                    .array());
+
+            path = Paths.get(pathToUM + "/HEC_" + mnemonic + "R_" + refNr + "R." + ext);
+//            Writer writer = new OutputStreamWriter(new FileOutputStream(Paths.get(pathToUM + "/HEC_" + mnemonic + "R_" + refNr + "R." + ext).toFile()), Charset.forName("UTF-8"));
+//
+//            byte[] textBytes = text.getBytes(TxtUtil.CHARSET_NAME);
+//            writer.write(new String(textBytes));
+//            writer.close();
+            Files.write(path, text.getBytes());
+
             LOGGER.debug("Path " + path + " created.");
         } catch (IOException e) {
             e.printStackTrace();
