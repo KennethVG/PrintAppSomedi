@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 public class TxtUtil {
 
+    private static final String DR = "#DR";
     private static final String PR = "#PR";
     private static final String UA = "#UA";
     private static final String PC = "#PC";
@@ -34,38 +35,42 @@ public class TxtUtil {
     private static final int MNEMONIC_LENGTH = 5;
     private static final int LINE_LENGTH = 75;
     private static final int LINE_LENGTH_SUMMARY = 74;
-    private static final int CONSULTID_MAX_LENGTH = 15;
+    private static final int EXTERNALID_MAX_LENGTH = 7;
     private static final int SUMMARY_MAX_LENGTH = 7;
 
     private static final String CHARSET_NAME = "Cp1252";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(TxtUtil.class);
 
+    private static String errorMessage;
+
     public static boolean isPathWithLetterNotToPrint(Path pathToTxt) {
-        boolean toPrint = false;
+        boolean notToPrint = false;
         try {
-            String lineWithConsultId = Files.lines(pathToTxt, Charset.forName(CHARSET_NAME)).filter(line -> line.trim
-                    ().toUpperCase()
-                    .startsWith(PR)
-            ).findFirst().orElseThrow(RuntimeException::new);
+            String externalId = getTextAfterKeyword(DR, pathToTxt);
 
-            LOGGER.debug("Line with PR= " + lineWithConsultId);
+            LOGGER.debug("ExternalId= " + externalId);
 
-            if (lineWithConsultId.length() > CONSULTID_MAX_LENGTH) {
-                LOGGER.info(PR + " of " + pathToTxt.getFileName() + " is groter dan 15 --> NIET PRINTEN!");
+            if (externalId.length() > EXTERNALID_MAX_LENGTH) {
+                errorMessage = "Dit verslag niet verwerken, #DR = EMD... , dit is een geadresseerde die niet moet " +
+                        "bewaard worden";
+                LOGGER.info(DR + " of " + pathToTxt.getFileName() + " is groter dan 15 --> NIET PRINTEN!");
                 return true;
             }
 
             long count = Files.lines(pathToTxt, Charset.forName(CHARSET_NAME)).filter(line -> Stream.of(DeleteItems
                     .values()).anyMatch(deleteItems -> line.contains
                     (deleteItems.getText()) || deleteItems.getText().equalsIgnoreCase(line))).count();
-            toPrint = count > 0;
+
+            if (count > 0) {
+                notToPrint = true;
+                errorMessage = "Onvolledig verslag vul_aan, P.N. of ... staat als tekst in verslag";
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
             LOGGER.error(e.getMessage());
         }
-        return toPrint;
+        return notToPrint;
     }
 
     public static String getBodyOfTxt(Path pathToTxt, UMFormat format) {
@@ -116,10 +121,14 @@ public class TxtUtil {
                     result.append(buildBody(startIndex, endIndex, allLines));
                 }
             }
-        } catch (IOException e){
+        } catch (IOException e) {
             LOGGER.error(e.getMessage());
         }
         return result.toString().trim();
+    }
+
+    public static String getErrorMessage() {
+        return errorMessage;
     }
 
     public static String getMnemonicAfterUA(Path pathToTxt) {
@@ -161,7 +170,6 @@ public class TxtUtil {
     public static String getRefNrAfterPR(Path pathToTxt) {
         return getTextAfterKeyword(PR, pathToTxt);
     }
-
 
     public static String getMnemnonic(Path path) {
         String fileName = FilenameUtils.getBaseName(path.toString());

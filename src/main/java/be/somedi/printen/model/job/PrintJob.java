@@ -21,6 +21,9 @@ import java.awt.print.PrinterJob;
 import java.io.IOException;
 import java.nio.file.*;
 
+import static be.somedi.printen.util.TxtUtil.getErrorMessage;
+import static be.somedi.printen.util.TxtUtil.isPathWithLetterNotToPrint;
+
 @Component
 public class PrintJob {
 
@@ -124,11 +127,9 @@ public class PrintJob {
 
     private boolean isPrintAndSendJobSucceeded(Path path) {
         String errorMessage;
-        if (TxtUtil.isPathWithLetterNotToPrint(path)) {
+        if (isPathWithLetterNotToPrint(path)) {
             LOGGER.debug(path + " write error file");
-            errorMessage = "Deze brief bevat vul_aan, P.N. of een ander woord waardoor de brief niet verzonden hoeft " +
-                    "te worden";
-            IOUtil.writeFileToError(PATH_TO_ERROR, path, errorMessage);
+            IOUtil.writeFileToError(PATH_TO_ERROR, path, getErrorMessage());
             return false;
         }
         ExternalCaregiver caregiverToPrint = service.findByMnemonic(TxtUtil.getMnemnonic(path));

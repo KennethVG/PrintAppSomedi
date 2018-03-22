@@ -22,7 +22,6 @@ public class ExternalCaregiver {
     private String phone;
     private String title;
     private Boolean printProtocols;
-    private String copyToExternalID;
     private String nihiiAddress;
 
     @Enumerated(EnumType.STRING)
@@ -76,16 +75,20 @@ public class ExternalCaregiver {
         this.printProtocols = printProtocols;
     }
 
-    public String getCopyToExternalID() {
-        return copyToExternalID;
-    }
-
     public String getNihiiAddress() {
         return nihiiAddress;
     }
 
+    public void setNihiiAddress(String nihiiAddress) {
+        this.nihiiAddress = nihiiAddress;
+    }
+
     public UMFormat getFormat() {
         return format;
+    }
+
+    public void setFormat(UMFormat format) {
+        this.format = format;
     }
 
     @Override
@@ -102,7 +105,6 @@ public class ExternalCaregiver {
                 ", phone='" + phone + '\'' +
                 ", title='" + title + '\'' +
                 ", printProtocols=" + printProtocols +
-                ", copyToExternalID='" + copyToExternalID + '\'' +
                 ", nihiiAddress='" + nihiiAddress + '\'' +
                 ", format=" + format +
                 '}';

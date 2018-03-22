@@ -1,6 +1,7 @@
 package be.somedi.printen.model.format;
 
 import be.somedi.printen.PrintAppApplication;
+import be.somedi.printen.util.FormatUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,13 +34,18 @@ public class MedarTest {
     @Test
     public void buildDocument() {
         String fullDoc = medar.buildDocument();
+        String date = FormatUtil.formatDate();
         assertEquals("/FROM     : Vantrappen|Prins de Lignestr 1 B0101|3001|Heverlee||1/06979/12/414\n" +
                 "/TO       : Vekemans|Hoogstraat 13|2223|Schriek||1/19564/37/004\n" +
                 "/SUBJECT  : Theodora|Van Hool|Dr.J.Vermylenstraat 14|2223|Schriek|19540630|V\n" +
-                "/INFO     : Created on 21/03/2018|MDR182670160\n" +
+                "/INFO     : Created on " +
+                date +
+                "|MDR182670160\n" +
                 "\n" +
                 "/TITLE Raadpleging Dr. Vantrappen\n" +
-                "/DATE 21/03/2018\n" +
+                "/DATE " +
+                date +
+                "\n" +
                 "Geachte collega,\n" +
                 "\n" +
                 "/DESCR\n" +

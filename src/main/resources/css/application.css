@@ -1,25 +1,135 @@
-.background {
-    -fx-background-color: #f1fbfb;
-}
+.root {
+    -fx-text-base-color: rgb(252.0, 240.0, 237.0);
+    -fx-text-fill: -fx-text-base-color;
 
-.button {
-    -fx-background-color: #1D494A;
+    -dark: rgb(47.0, 52.0, 57.0);
+    -fx-background-color: -dark;
+
+    /*default font */
     -fx-font-family: "Calibri Light", sans-serif;
-    -fx-text-fill: #FFFFFF;
-    -fx-cursor: hand;
-    -fx-font-size: 1.2em;
+    -fx-font-size: 1.3em;
+    -fx-font-weight: 600;
+    -fx-disabled-opacity: 0.6;
+
+    -flatter-red: rgb(237.0, 68.0, 37.0);
+    -flatter-blue: rgb(0.0, 184.0, 222.0);
 }
 
-.button:hover {
-    -fx-background-color: #d8d8d8;
-    -fx-text-fill: #000000;
+/*******************************************************************************
+ *                                                                             *
+ * ChoiceBox                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+.choice-box {
+    -fx-cursor: hand;
+    -fx-background-color: -flatter-blue;
+    -fx-background-insets:  0.0;
+    -fx-background-radius: 2.0;
+    -fx-border-width: 0.0;
 }
+
+.choice-box > .label {
+    -fx-padding:0.7em 1.7em 0.7em 0.7em;
+}
+
+.choice-box > .open-button {
+    -fx-padding: 1.2em 0.7em 1.2em 0.5em;
+    -fx-background-radius: 0.0 2.0 2.0 0.0;
+}
+
+.choice-box:focused{
+    -fx-background-color: derive(-flatter-blue, 50.0%);
+}
+
+.choice-box > .open-button > .arrow {
+    -fx-background-color: white;
+    -fx-padding: 0.2em;
+    -fx-effect:dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
+}
+
+.context-menu {
+    -fx-background-color: rgb(255.0, 255.0, 255.0, 0.95);
+    -fx-background-radius: 2.0;
+}
+
+.context-menu .label {
+    -fx-text-fill: -dark;
+}
+
+.radio-menu-item > .left-container > .radio,
+.check-menu-item > .left-container > .check {
+    -fx-background-color: transparent;
+    -fx-shape: "m 269.9,233.66286 c 0.15,-0.12 1.97,1.7 2.54,3.1 2.3,-7.33 4.09,-9.1 6.79,-12.1 1.5,-0.25 2.4,-0.27 4.36,0.11 -7.1,5.8 -8.8,16.7 -9.9,17.8 l -0.75,0.02 c 0,0 -2.36,-5.24 -5.6,-7.38 -0.27,-0.17 0.02,-1.5 -0.2,-1.6 z";
+    -fx-padding: 0.68em 0.68em 0.0em 0.0em;
+}
+
+.menu-item:focused {
+    -fx-background-color: rgb(94.0, 203.0, 234.0);
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Label                                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
 
 .label {
-    -fx-font-size: 1em;
+    -fx-text-fill: -fx-text-base-color;
+}
+
+.text {
+    -fx-effect:dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
 }
 
 #title {
     -fx-font-size: 1.6em;
-    -fx-color-label-visible: #46c5c9;
+    -fx-color-label-visible: flatter-blue;
 }
+
+/*******************************************************************************
+ *                                                                             *
+ * Button                                                                      *
+ *                                                                             *
+ ******************************************************************************/
+
+.button{
+    -fx-cursor: hand;
+    -fx-background-color: -flatter-red;
+    -fx-background-insets:  0.0;
+    -fx-background-radius: 2.0;
+    -fx-border-width: 0.0;
+    -fx-padding: 0.7em;
+    -fx-text-fill: -fx-text-base-color;
+    -fx-alignment: CENTER;
+    -fx-content-display: LEFT;
+}
+
+.button:focused,
+.button:default:focused {
+    -fx-background-color: derive(-flatter-red, 50.0%);
+}
+
+.button:armed,
+.button:default:armed {
+    -fx-background-color: derive(-flatter-red, -20.0%);
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * TextField & TextArea                                                        *
+ *                                                                             *
+ ******************************************************************************/
+
+.text-area , .text-field {
+    -fx-background-color: white;
+    -fx-background-insets:  0.0;
+    -fx-background-radius: 2.0;
+    -fx-padding: 0.7em;
+    -fx-border-width: 0.0;
+    -fx-prompt-text-fill: derive(-dark, 50.0%);
+    -fx-highlight-fill: rgb(94.0, 203.0, 234.0);
+}
+
+

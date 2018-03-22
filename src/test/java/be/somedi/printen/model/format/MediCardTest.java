@@ -1,6 +1,7 @@
 package be.somedi.printen.model.format;
 
 import be.somedi.printen.PrintAppApplication;
+import be.somedi.printen.util.FormatUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +33,7 @@ public class MediCardTest {
 
     @Test
     public void buildDocument() {
-
+        String date = FormatUtil.formatDate();
         String fullDoc = mediCard.buildDocument();
         assertEquals("PROTO BEGIN\n" +
                 "\n" +
@@ -41,7 +42,8 @@ public class MediCardTest {
                 "2220 Heist-op-den-Berg\n" +
                 "Tel.: 015/25.89.11\n" +
                 "\n" +
-                "21/03/2018                    R182670160\n" +
+                date +
+                "                    R182670160\n" +
                 "          Vantrappen Greet\n" +
                 "\n" +
                 "          Van Hool,Theodora\n" +

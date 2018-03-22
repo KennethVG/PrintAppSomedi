@@ -2,6 +2,7 @@ package be.somedi.printen.javafx;
 
 import be.somedi.printen.entity.ExternalCaregiver;
 import be.somedi.printen.model.PrintProtocols;
+import be.somedi.printen.model.UMFormat;
 import be.somedi.printen.service.ExternalCaregiverService;
 import be.somedi.printen.model.job.PrintJob;
 import ch.qos.logback.core.util.ExecutorServiceUtil;
@@ -30,18 +31,24 @@ public class ExternalCaregiverViewController {
 
     @FXML
     private Label lblJobResult;
-
     @FXML
     private Label lblSearchResult;
-
     @FXML
-    private Label lblInfo;
+    private Label lblPrint;
+    @FXML
+    private Label lblFormat;
+    @FXML
+    private Label lblRiziv;
 
     @FXML
     private TextField txtExternalId;
+    @FXML
+    private TextField txtRizivAdres;
 
     @FXML
     private ChoiceBox<String> cbPrintProtocols;
+    @FXML
+    private ChoiceBox<String> cbFormaat;
 
     @FXML
     private Button updateDokter;
@@ -54,24 +61,44 @@ public class ExternalCaregiverViewController {
     }
 
     @FXML
-    public void initialize(){
-        listOfPrintValues = Arrays.stream(PrintProtocols.values()).map(pp-> pp.name().toLowerCase()).collect(Collectors.toList());
+    public void initialize() {
+
+        setVisibility(false);
+
+        listOfPrintValues = Arrays.stream(PrintProtocols.values()).map(pp -> pp.name().toLowerCase()).collect
+                (Collectors.toList());
         cbPrintProtocols.getItems().addAll(listOfPrintValues);
+
+        List<String> listOfFormats = Arrays.stream(UMFormat.values()).map(format -> format.name().toLowerCase()).collect
+                (Collectors.toList());
+        cbFormaat.getItems().addAll(listOfFormats);
     }
 
     @FXML
     private void updateDokter() {
-        String selectedValue = cbPrintProtocols.getValue();
-        if (selectedValue.equals("ja")) {
+        String selectedPrintValue = cbPrintProtocols.getValue();
+        if (selectedPrintValue.equals("ja")) {
             caregiverToUpdate.setPrintProtocols(true);
         } else {
             caregiverToUpdate.setPrintProtocols(false);
         }
 
-        int result = service.updatePrintProtocols(caregiverToUpdate);
-        String text = caregiverToUpdate.getPrintProtocols() ? " wenst vanaf nu papieren protocols" : " wenst vanaf nu GEEN papieren protocols meer";
+        String selectedFormatValue = cbFormaat.getValue();
+        switch (selectedFormatValue) {
+            case "medar":
+                caregiverToUpdate.setFormat(UMFormat.MEDAR);
+                break;
+            case "medicard":
+                caregiverToUpdate.setFormat(UMFormat.MEDICARD);
+                break;
+            default:
+                caregiverToUpdate.setFormat(UMFormat.MEDIDOC);
+        }
+        caregiverToUpdate.setNihiiAddress(txtRizivAdres.getText());
+
+        int result = service.updateExternalCaregiver(caregiverToUpdate);
         if (result == 1) {
-            lblSearchResult.setText("Dokter " + caregiverToUpdate.getLastName() + text);
+            lblSearchResult.setText("Dokter " + caregiverToUpdate.getLastName() + " is met succes geüpdatet!");
         } else
             lblSearchResult.setText("Update mislukt!");
     }
@@ -85,12 +112,16 @@ public class ExternalCaregiverViewController {
         caregiverToUpdate = service.findByMnemonic(externalId);
 
         if (caregiverToUpdate != null) {
-            lblSearchResult.setText(caregiverToUpdate.getExternalID() + " " + caregiverToUpdate.getLastName() + " " + caregiverToUpdate.getFirstName());
-            cbPrintProtocols.setVisible(true);
-            updateDokter.setVisible(true);
-            lblInfo.setVisible(true);
+            lblSearchResult.setText(caregiverToUpdate.getExternalID() + " " + caregiverToUpdate.getLastName() + " " +
+                    caregiverToUpdate.getFirstName());
+            setVisibility(true);
 
-            cbPrintProtocols.setValue(caregiverToUpdate.getPrintProtocols() ? listOfPrintValues.get(0) : listOfPrintValues.get(1));
+            cbPrintProtocols.setValue(caregiverToUpdate.getPrintProtocols() ? listOfPrintValues.get(0) :
+                    listOfPrintValues.get(1));
+            cbFormaat.setValue(caregiverToUpdate.getFormat().name().toLowerCase());
+            txtRizivAdres.setText(caregiverToUpdate.getNihiiAddress() != null ? caregiverToUpdate.getNihiiAddress() :
+                    caregiverToUpdate.getNihii());
+
         } else {
             lblSearchResult.setText("Deze mnemonic bestaat niet in de Cliniconnect database");
         }
@@ -109,5 +140,17 @@ public class ExternalCaregiverViewController {
         printPDF.stopPrintJob();
         executorService.shutdownNow();
         lblJobResult.setText("Geen printjob bezig!");
+    }
+
+
+    private void setVisibility(boolean visible) {
+        cbPrintProtocols.setVisible(visible);
+        updateDokter.setVisible(visible);
+        lblPrint.setVisible(visible);
+
+        lblFormat.setVisible(visible);
+        lblRiziv.setVisible(visible);
+        cbFormaat.setVisible(visible);
+        txtRizivAdres.setVisible(visible);
     }
 }

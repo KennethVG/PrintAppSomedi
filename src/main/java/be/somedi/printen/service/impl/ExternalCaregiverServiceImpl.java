@@ -25,7 +25,7 @@ public class ExternalCaregiverServiceImpl implements ExternalCaregiverService {
     }
 
     @Override
-    public int updatePrintProtocols(ExternalCaregiver caregiver) {
+    public int updateExternalCaregiver(ExternalCaregiver caregiver) {
         ExternalCaregiver externalCaregiver = repository.saveAndFlush(caregiver);
         if (externalCaregiver != null) {
             return 1;
