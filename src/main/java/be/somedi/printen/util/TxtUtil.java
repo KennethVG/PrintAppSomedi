@@ -50,7 +50,12 @@ public class TxtUtil {
 
             LOGGER.debug("ExternalId= " + externalId);
 
-            if (externalId.length() > EXTERNALID_MAX_LENGTH) {
+            if(externalId == null || externalId.equals("")){
+                errorMessage = "Dit is geen verslag";
+                LOGGER.info("Dit is geen verslag.");
+                return true;
+            }
+            else if (externalId.length() > EXTERNALID_MAX_LENGTH) {
                 errorMessage = "Dit verslag niet verwerken, #DR = EMD... , dit is een geadresseerde die niet moet " +
                         "bewaard worden";
                 LOGGER.info(DR + " of " + pathToTxt.getFileName() + " is groter dan 15 --> NIET PRINTEN!");
@@ -201,8 +206,8 @@ public class TxtUtil {
         try {
             String specificLine = Files.lines(pathToTxt, Charset.forName(CHARSET_NAME)).filter(line -> line.trim()
                     .toUpperCase().startsWith(keyword))
-                    .findFirst()
-                    .orElseThrow(RuntimeException::new);
+                    .findFirst().orElse("");
+//                    .orElseThrow(RuntimeException::new);
             result = StringUtils.substring(specificLine, 3).trim();
         } catch (IOException e) {
             e.printStackTrace();

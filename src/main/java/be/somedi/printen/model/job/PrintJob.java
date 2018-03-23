@@ -148,6 +148,11 @@ public class PrintJob {
                     return false;
                 }
             }
+        } else {
+            LOGGER.info("Caregiver is NULL");
+            errorMessage = "Caregiver is NULL!";
+            IOUtil.writeFileToError(PATH_TO_ERROR, path, errorMessage);
+            return false;
         }
         return true;
     }
