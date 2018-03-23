@@ -127,9 +127,15 @@ public class PrintJob {
 
     private boolean isPrintAndSendJobSucceeded(Path path) {
         String errorMessage;
+        String fileToPrint = FilenameUtils.getBaseName(path.toString()).replace("MSE", "PDF");
+        Path pathOfPDF = Paths.get(PATH_TO_READ + "\\" + fileToPrint + ".pdf");
+
         if (isPathWithLetterNotToPrint(path)) {
             LOGGER.debug(path + " write error file");
             IOUtil.writeFileToError(PATH_TO_ERROR, path, getErrorMessage());
+
+            LOGGER.debug("Deze brief hoeft geen print: COPY PDF to error path");
+            IOUtil.makeBackUpAndDelete(pathOfPDF, Paths.get(PATH_TO_ERROR + "\\" + fileToPrint + ".pdf"));
             return false;
         }
         ExternalCaregiver caregiverToPrint = service.findByMnemonic(TxtUtil.getMnemnonic(path));
@@ -139,14 +145,17 @@ public class PrintJob {
             sendToUM(caregiverToPrint, path);
 
             if (null != caregiverToPrint.getPrintProtocols() && caregiverToPrint.getPrintProtocols()) {
-                String fileToPrint = FilenameUtils.getBaseName(path.toString()).replace("MSE", "PDF");
-                if (isPrinted(Paths.get(PATH_TO_READ + "\\" + fileToPrint + ".pdf"))) {
+                if (isPrinted(pathOfPDF)) {
+                    IOUtil.makeBackUpAndDelete(pathOfPDF, Paths.get(PATH_TO_COPY + "\\" + fileToPrint + ".pdf"));
                     return true;
                 } else {
                     errorMessage = "PDF NOT FOUND: " + fileToPrint + ".pdf";
                     IOUtil.writeFileToError(PATH_TO_ERROR, path, errorMessage);
                     return false;
                 }
+            } else {
+                LOGGER.debug("COPY PDF to error path");
+                IOUtil.makeBackUpAndDelete(pathOfPDF, Paths.get(PATH_TO_ERROR + "\\" + fileToPrint + ".pdf"));
             }
         } else {
             LOGGER.info("Caregiver is NULL");
@@ -158,14 +167,14 @@ public class PrintJob {
     }
 
     private void sendToUM(ExternalCaregiver caregiverToPrint, Path path) {
-        if(sendToUmJob.formatAndSend(caregiverToPrint, path)){
+        if (sendToUmJob.formatAndSend(caregiverToPrint, path)) {
             LOGGER.debug(path + "  verzenden naar UM is gelukt!");
 
             String externalId = caregiverToPrint.getExternalID();
             String linkedId = linkedExternalCargiverService.findLinkedIdByExternalId(externalId);
-            if(linkedId != null){
+            if (linkedId != null) {
                 ExternalCaregiver caregiverToSendCopy = service.findByMnemonic(linkedId);
-                if(sendToUmJob.formatAndSend(caregiverToSendCopy, path)){
+                if (sendToUmJob.formatAndSend(caregiverToSendCopy, path)) {
                     LOGGER.debug(path + " copy verzenden naar UM is gelukt!");
                 }
             }

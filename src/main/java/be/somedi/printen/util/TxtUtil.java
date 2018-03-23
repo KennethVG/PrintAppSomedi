@@ -47,9 +47,6 @@ public class TxtUtil {
         boolean notToPrint = false;
         try {
             String externalId = getTextAfterKeyword(DR, pathToTxt);
-
-            LOGGER.debug("ExternalId= " + externalId);
-
             if(externalId == null || externalId.equals("")){
                 errorMessage = "Dit is geen verslag";
                 LOGGER.info("Dit is geen verslag.");
@@ -207,7 +204,6 @@ public class TxtUtil {
             String specificLine = Files.lines(pathToTxt, Charset.forName(CHARSET_NAME)).filter(line -> line.trim()
                     .toUpperCase().startsWith(keyword))
                     .findFirst().orElse("");
-//                    .orElseThrow(RuntimeException::new);
             result = StringUtils.substring(specificLine, 3).trim();
         } catch (IOException e) {
             e.printStackTrace();
