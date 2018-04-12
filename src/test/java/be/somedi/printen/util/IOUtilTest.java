@@ -19,7 +19,6 @@ public class IOUtilTest {
         Path path = resNotToPrint.getFile().toPath();
         System.out.println(path);
         result = IOUtil.writeFileToError(path.getParent(), path, "Geen verslag van specialist");
-        System.out.println("RESULT: " + result.getFileName());
         Assert.assertTrue(Files.exists(result));
 
     }
@@ -29,7 +28,6 @@ public class IOUtilTest {
         ClassPathResource txtFile = new ClassPathResource("MSE_182670181_2976687_A4407.txt");
         Path path = txtFile.getFile().toPath();
         result = IOUtil.writeFileToUM(path.getParent(), "A4407", "182670181", "REP", "Hello World");
-        System.out.println("RESULT: " + result.getFileName());
         Assert.assertTrue(Files.exists(result));
     }
 

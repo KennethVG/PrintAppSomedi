@@ -22,7 +22,7 @@ public class FormatUtil {
         return result.toString();
     }
 
-    public static String formatBlanksBeforeString(int numberOfBlanks, String field){
+    public static String formatBlanksBeforeString(int numberOfBlanks, String field) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < numberOfBlanks; i++) {
             result.append(" ");
@@ -46,7 +46,7 @@ public class FormatUtil {
         return formatter.format(ld);
     }
 
-    public static String formatDate(){
+    public static String formatDate() {
         LocalDate now = LocalDate.now();
         DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         return outputFormat.format(now);

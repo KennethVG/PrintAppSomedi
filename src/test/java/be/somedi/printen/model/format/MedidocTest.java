@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import static be.somedi.printen.util.FormatUtil.formatDateAndTime;
 import static org.junit.Assert.assertEquals;
 
-
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = PrintAppApplication.class)
 @TestPropertySource({"/application.properties", "/application-dev.properties", "/path-dev.properties"})
@@ -34,7 +33,7 @@ public class MedidocTest {
     }
 
     @Test
-    public void buildDocument(){
+    public void buildDocument() {
         String fullDoc = medidoc.buildDocument();
         assertEquals("1/06979/12/414\n" +
                 "Vantrappen              Greet\n" +
@@ -70,6 +69,5 @@ public class MedidocTest {
                 "#R/\n" +
                 "#A/\n" +
                 "#/34", fullDoc);
-
     }
 }
