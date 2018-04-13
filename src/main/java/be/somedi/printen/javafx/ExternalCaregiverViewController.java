@@ -1,6 +1,7 @@
 package be.somedi.printen.javafx;
 
 import be.somedi.printen.entity.ExternalCaregiver;
+import be.somedi.printen.mapper.FormatMapper;
 import be.somedi.printen.model.PrintProtocols;
 import be.somedi.printen.model.UMFormat;
 import be.somedi.printen.service.ExternalCaregiverService;
@@ -84,16 +85,7 @@ public class ExternalCaregiverViewController {
         }
 
         String selectedFormatValue = cbFormaat.getValue();
-        switch (selectedFormatValue) {
-            case "medar":
-                caregiverToUpdate.setFormat(UMFormat.MEDAR);
-                break;
-            case "medicard":
-                caregiverToUpdate.setFormat(UMFormat.MEDICARD);
-                break;
-            default:
-                caregiverToUpdate.setFormat(UMFormat.MEDIDOC);
-        }
+        caregiverToUpdate.setFormat(FormatMapper.mapToFormat(selectedFormatValue));
         caregiverToUpdate.setNihiiAddress(txtRizivAdres.getText());
 
         int result = service.updateExternalCaregiver(caregiverToUpdate);
@@ -141,7 +133,6 @@ public class ExternalCaregiverViewController {
         executorService.shutdownNow();
         lblJobResult.setText("Geen printjob bezig!");
     }
-
 
     private void setVisibility(boolean visible) {
         cbPrintProtocols.setVisible(visible);
