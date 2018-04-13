@@ -31,28 +31,22 @@ public class SendToUmJob {
     }
 
     public boolean formatAndSend(ExternalCaregiver caregiver, Path pathToTxt) {
-        BaseFormat baseFormat;
         switch (caregiver.getFormat()) {
             case MEDIDOC:
-                baseFormat = beans.getBean(Medidoc.class);
-                baseFormat.setPathToTxt(pathToTxt);
-                Path repFile = baseFormat.makeRepFile(PATH_TO_UM_MEDIDOC, caregiver);
-                Path adrFile = baseFormat.makeAdrFile(PATH_TO_UM_MEDIDOC, caregiver);
-                return Files.exists(repFile) && Files.exists(adrFile);
+                return makeFiles(beans.getBean(Medidoc.class), pathToTxt, caregiver, PATH_TO_UM_MEDIDOC);
             case MEDAR:
-                baseFormat = beans.getBean(Medar.class);
-                baseFormat.setPathToTxt(pathToTxt);
-                Path repFileMedar = baseFormat.makeRepFile(PATH_TO_UM_MEDAR, caregiver);
-                Path adrFileMedar = baseFormat.makeAdrFile(PATH_TO_UM_MEDAR, caregiver);
-                return Files.exists(repFileMedar) && Files.exists(adrFileMedar);
+                return makeFiles(beans.getBean(Medar.class), pathToTxt, caregiver, PATH_TO_UM_MEDAR);
             case MEDICARD:
-                baseFormat = beans.getBean(MediCard.class);
-                baseFormat.setPathToTxt(pathToTxt);
-                Path repFileMedicard = baseFormat.makeRepFile(PATH_TO_UM_MEDICARD, caregiver);
-                Path adrFileMedicard = baseFormat.makeAdrFile(PATH_TO_UM_MEDICARD, caregiver);
-                return Files.exists(repFileMedicard) && Files.exists(adrFileMedicard);
+                return makeFiles(beans.getBean(MediCard.class), pathToTxt, caregiver, PATH_TO_UM_MEDICARD);
             default:
                 return true;
         }
+    }
+
+    private boolean makeFiles(BaseFormat baseFormat, Path pathToTxt, ExternalCaregiver caregiver,  Path pathToUm){
+        baseFormat.setPathToTxt(pathToTxt);
+        Path repFile = baseFormat.makeRepFile(pathToUm, caregiver);
+        Path adrFile = baseFormat.makeAdrFile(pathToUm, caregiver);
+        return Files.exists(repFile) && Files.exists(adrFile);
     }
 }
