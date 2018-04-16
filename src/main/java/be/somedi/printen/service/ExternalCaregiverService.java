@@ -6,7 +6,6 @@ public interface ExternalCaregiverService {
 
     ExternalCaregiver findByMnemonic(String mnemonic);
 
-    int updateExternalCaregiver(ExternalCaregiver printProtocols);
-
+    int updateExternalCaregiver(ExternalCaregiver externalCaregiver);
 
 }
