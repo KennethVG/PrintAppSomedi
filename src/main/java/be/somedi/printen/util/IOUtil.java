@@ -1,14 +1,11 @@
 package be.somedi.printen.util;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,19 +31,7 @@ public class IOUtil {
         Path path = null;
         try {
             path = Paths.get(pathToUM + "/HEC_" + mnemonic + "R_" + refNr + "R." + ext);
-//            FileOutputStream outputStream = new FileOutputStream(path.toFile());
-//            OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
-//            writer.write(text);
-//            writer.close();
-//
-//            path = Paths.get(pathToUM + "/TEST_" + mnemonic + "R_" + refNr + "R." + ext);
-//            BufferedWriter bufferedWriter = Files.newBufferedWriter(path, Charset.forName("UTF-8"));
-//            bufferedWriter.write(text);
-//            bufferedWriter.close();
-//
-//            path = Paths.get(pathToUM + "/OTHERTEST_" + mnemonic + "R_" + refNr + "R." + ext);
             Files.write(path, text.getBytes());
-
             LOGGER.debug("Path " + path + " created.");
         } catch (IOException e) {
             e.printStackTrace();
@@ -62,7 +47,7 @@ public class IOUtil {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (fromPath.toFile().delete()) {
+            if (FileUtils.deleteQuietly(fromPath.toFile())) {
                 LOGGER.debug("Deleted: " + fromPath);
                 return false;
             }

@@ -93,7 +93,6 @@ public class Medidoc extends BaseFormat {
 
     private String buildBody() {
         StringBuilder result = new StringBuilder();
-        ExternalCaregiver specialistOfSomedi = getSpecialistOfSomedi();
 
         //LINE1: Aanduiding begin resultaat
         result.append("#Rb").append("\n");

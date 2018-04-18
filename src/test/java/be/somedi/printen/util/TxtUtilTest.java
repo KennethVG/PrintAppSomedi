@@ -66,17 +66,17 @@ public class TxtUtilTest {
 
     @Test
     public void testGetBodyWithLongLine() throws IOException {
-        ClassPathResource txtFile = new ClassPathResource("MSE_182670160_2976684_A9564.txt");
+        ClassPathResource txtFile = new ClassPathResource("MSE_182670149_2976686_A4507.txt");
         Path path = txtFile.getFile().toPath();
         String result = TxtUtil.getBodyOfTxt(path, UMFormat.MEDIDOC);
-        String expected = "Betreft : uw patiënt(e) Van Hool Theodora geboren op 30/06/1954 \n" +
-                " en wonende Dr.J.Vermylenstraat 14 te 2223 Schriek. \n" +
+        String expected = "Betreft : uw patiënt(e) Van Aerde Liliane geboren op 24/11/1933 \n" +
+                " en wonende Pastoor Van Eycklei 22 te 2221 Booischot. \n" +
                 "\n" +
-                " Consultatie : 04/01/2018 met referentienr : 182670160 \n" +
+                " Consultatie : 04/01/2018 met referentienr : 182670149 \n" +
                 "\n" +
                 "\n" +
-                "Deze brief zou ook naar Jamar moete gaan. Wordt hier aparte XML voor \n" +
-                "aangemaakt?";
+                "Test met de lettergrootte van Cliniconnect. Te groot, te klein? Ideaal? \n" +
+                "En het Lettertype? Is dit goed leesbaar? ";
         assertEquals(expected, result);
     }
 
@@ -85,18 +85,18 @@ public class TxtUtilTest {
         ClassPathResource txtFile = new ClassPathResource("besluit.txt");
         Path path = txtFile.getFile().toPath();
         String result = TxtUtil.getBodyOfTxt(path, UMFormat.MEDIDOC);
-        String expected = "Betreft :Â uw patiÃ«nt(e) Van Vliet Alexandra geboren op 11/10/2006Â   en\n" +
+        String expected = "Betreft : uw patiënt(e) Van Vliet Alexandra geboren op 11/10/2006   en\n" +
                 " wonende\n" +
-                "Kerkhofstraat 43 te 2220 Heist-op-den-Berg.Â \n" +
+                "Kerkhofstraat 43 te 2220 Heist-op-den-Berg. \n" +
                 "\n" +
                 " Consultatie : 04/01/2018 met referentienr : 182670181\n" +
                 "\n" +
                 "* ANAMNESE:\n" +
-                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
-                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
-                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
                 "\n" +
                 " * klinisch onderzoekklinisch onderzoek\n" +
@@ -114,18 +114,18 @@ public class TxtUtilTest {
         ClassPathResource txtFile = new ClassPathResource("besluit.txt");
         Path path = txtFile.getFile().toPath();
         String result = TxtUtil.getBodyOfTxt(path, UMFormat.MEDAR);
-        assertEquals("Betreft :Â uw patiÃ«nt(e) Van Vliet Alexandra geboren op 11/10/2006Â   en\n" +
+        assertEquals("Betreft : uw patiënt(e) Van Vliet Alexandra geboren op 11/10/2006   en\n" +
                 " wonende\n" +
-                "Kerkhofstraat 43 te 2220 Heist-op-den-Berg.Â \n" +
+                "Kerkhofstraat 43 te 2220 Heist-op-den-Berg. \n" +
                 "\n" +
                 " Consultatie : 04/01/2018 met referentienr : 182670181\n" +
                 "\n" +
                 "* ANAMNESE:\n" +
-                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
-                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
-                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
                 "\n" +
                 " * klinisch onderzoekklinisch onderzoek\n" +
@@ -143,18 +143,18 @@ public class TxtUtilTest {
         ClassPathResource txtFile = new ClassPathResource("langBesluit.txt");
         Path path = txtFile.getFile().toPath();
         String result = TxtUtil.getBodyOfTxt(path, UMFormat.MEDIDOC);
-        String expected = "Betreft :Â uw patiÃ«nt(e) Van Vliet Alexandra geboren op 11/10/2006Â   en\n" +
+        String expected = "Betreft : uw patiënt(e) Van Vliet Alexandra geboren op 11/10/2006   en\n" +
                 " wonende\n" +
-                "Kerkhofstraat 43 te 2220 Heist-op-den-Berg.Â \n" +
+                "Kerkhofstraat 43 te 2220 Heist-op-den-Berg. \n" +
                 "\n" +
                 " Consultatie : 04/01/2018 met referentienr : 182670181\n" +
                 "\n" +
                 "* ANAMNESE:\n" +
-                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
-                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
-                "Â klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
+                " klinisch onderzoek klinisch onderzoek klinisch onderzoek klinisch\n" +
                 " onderzoek een veel te lange lijn, alleszins langer dan 75 karakters.\n" +
                 "\n" +
                 " * klinisch onderzoekklinisch onderzoek\n" +

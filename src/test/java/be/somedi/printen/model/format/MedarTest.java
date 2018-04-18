@@ -27,7 +27,7 @@ public class MedarTest {
 
     @Before
     public void init() throws IOException {
-        ClassPathResource txtFile = new ClassPathResource("MSE_182670160_2976684_A9564.txt");
+        ClassPathResource txtFile = new ClassPathResource("MSE_182670149_2976686_A4507.txt");
         medar.setPathToTxt(txtFile.getFile().toPath());
     }
 
@@ -36,11 +36,9 @@ public class MedarTest {
         String fullDoc = medar.buildDocument();
         String date = FormatUtil.formatDate();
         assertEquals("/FROM     : Vantrappen|Prins de Lignestr 1 B0101|3001|Heverlee||1/06979/12/414\n" +
-                "/TO       : Vekemans|Hoogstraat 13|2223|Schriek||1/19564/37/004\n" +
-                "/SUBJECT  : Theodora|Van Hool|Dr.J.Vermylenstraat 14|2223|Schriek|19540630|V\n" +
-                "/INFO     : Created on " +
-                date +
-                "|MDR182670160\n" +
+                "/TO       : Bijdekerke|Schrieksesteenweg 16|2221|Booischot||1/14507/50/004\n" +
+                "/SUBJECT  : Liliane|Van Aerde|Pastoor Van Eycklei 22|2221|Booischot|19331124|V\n" +
+                "/INFO     : Created on 18/04/2018|MDR182670149\n" +
                 "\n" +
                 "/TITLE Raadpleging Dr. Vantrappen\n" +
                 "/DATE " +
@@ -49,14 +47,14 @@ public class MedarTest {
                 "Geachte collega,\n" +
                 "\n" +
                 "/DESCR\n" +
-                "Betreft : uw patiënt(e) Van Hool Theodora geboren op 30/06/1954 \n" +
-                " en wonende Dr.J.Vermylenstraat 14 te 2223 Schriek. \n" +
+                "Betreft : uw patiënt(e) Van Aerde Liliane geboren op 24/11/1933 \n" +
+                " en wonende Pastoor Van Eycklei 22 te 2221 Booischot. \n" +
                 "\n" +
-                " Consultatie : 04/01/2018 met referentienr : 182670160 \n" +
+                " Consultatie : 04/01/2018 met referentienr : 182670149 \n" +
                 "\n" +
                 "\n" +
-                "Deze brief zou ook naar Jamar moete gaan. Wordt hier aparte XML voor \n" +
-                "aangemaakt?\n" +
+                "Test met de lettergrootte van Cliniconnect. Te groot, te klein? Ideaal? \n" +
+                "En het Lettertype? Is dit goed leesbaar? \n" +
                 "/END\n" +
                 "Met vriendelijke groeten,\n" +
                 "Dr. Vantrappen Greet\n", fullDoc);

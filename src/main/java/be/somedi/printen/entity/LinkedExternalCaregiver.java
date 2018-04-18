@@ -9,8 +9,8 @@ import java.util.Objects;
 
 @Entity
 @IdClass(LinkedExternalCaregiverPk.class)
-//@Table(name="dbo.Communication_LinkedExternalCaregiver")
-@Table(name = "linkedexternalcaregiver")
+@Table(name="dbo.Communication_LinkedExternalCaregiver")
+//@Table(name = "linkedexternalcaregiver")
 public class LinkedExternalCaregiver {
 
     @Id

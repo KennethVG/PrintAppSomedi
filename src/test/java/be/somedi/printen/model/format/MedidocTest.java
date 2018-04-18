@@ -28,7 +28,7 @@ public class MedidocTest {
 
     @Before
     public void init() throws IOException {
-        ClassPathResource txtFile = new ClassPathResource("MSE_182670160_2976684_A9564.txt");
+        ClassPathResource txtFile = new ClassPathResource("MSE_182670149_2976686_A4507.txt");
         medidoc.setPathToTxt(txtFile.getFile().toPath());
     }
 
@@ -42,27 +42,27 @@ public class MedidocTest {
                 "016/236904\n" +
                 "\n" +
                 formatDateAndTime(LocalDateTime.now()) + "\n" +
-                "1/19564/37/004\n" +
-                "Vekemans                Helga\n" +
-                "#A54063027006\n" +
-                "Van Hool                Theodora\n" +
-                "19540630\n" +
+                "1/14507/50/004\n" +
+                "Bijdekerke              Erik\n" +
+                "#A33112416480\n" +
+                "Van Aerde               Liliane\n" +
+                "19331124\n" +
                 "X\n" +
                 "20180104\n" +
-                "182670160     \n" +
+                "182670149     \n" +
                 "\n" +
                 "#Rb\n" +
                 "!Onderzoek\n" +
                 "Geachte collega,\n" +
                 "\n" +
-                "Betreft : uw patiënt(e) Van Hool Theodora geboren op 30/06/1954 \n" +
-                " en wonende Dr.J.Vermylenstraat 14 te 2223 Schriek. \n" +
+                "Betreft : uw patiënt(e) Van Aerde Liliane geboren op 24/11/1933 \n" +
+                " en wonende Pastoor Van Eycklei 22 te 2221 Booischot. \n" +
                 "\n" +
-                " Consultatie : 04/01/2018 met referentienr : 182670160 \n" +
+                " Consultatie : 04/01/2018 met referentienr : 182670149 \n" +
                 "\n" +
                 "\n" +
-                "Deze brief zou ook naar Jamar moete gaan. Wordt hier aparte XML voor \n" +
-                "aangemaakt?\n" +
+                "Test met de lettergrootte van Cliniconnect. Te groot, te klein? Ideaal? \n" +
+                "En het Lettertype? Is dit goed leesbaar? \n" +
                 "\n" +
                 "Met vriendelijke groeten,\n" +
                 "Dr. Vantrappen Greet\n" +

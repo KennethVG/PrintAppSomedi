@@ -38,7 +38,7 @@ public class TxtUtil {
     private static final int EXTERNALID_MAX_LENGTH = 7;
     private static final int SUMMARY_MAX_LENGTH = 7;
 
-    private static final String CHARSET_NAME = "Cp1252";
+    private static final String CHARSET_NAME = "utf-8";
     private static final Logger LOGGER = LoggerFactory.getLogger(TxtUtil.class);
 
     private static String errorMessage;

@@ -76,13 +76,14 @@ public class PrintJob {
                     .filter(Files::isRegularFile)
                     .filter(path -> StringUtils.endsWith(path.toString(), ".txt"))
                     .filter(path -> {
-                        if (isPrintAndSendJobSucceeded(path)) {
-                            return IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + path.getFileName
-                                    ()));
-                        } else
-                            return IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + path.getFileName
-                                    ()));
-                    }).count();
+                                if (isPrintAndSendJobSucceeded(path)) {
+                                    return IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + path.getFileName
+                                            ()));
+                                } else
+                                    return IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + path.getFileName
+                                            ()));
+                            }
+                    ).forEach(System.out::println);
 
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
@@ -117,7 +118,6 @@ public class PrintJob {
                     LOGGER.debug("Key has been unregistered");
                 }
             }
-
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             LOGGER.error(e.getMessage());
@@ -147,15 +147,18 @@ public class PrintJob {
             if (null != caregiverToPrint.getPrintProtocols() && caregiverToPrint.getPrintProtocols()) {
                 if (isPrinted(pathOfPDF)) {
                     IOUtil.makeBackUpAndDelete(pathOfPDF, Paths.get(PATH_TO_COPY + "\\" + fileToPrint + ".pdf"));
+//                    IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + path.getFileName()));
                     return true;
                 } else {
                     errorMessage = "PDF NOT FOUND: " + fileToPrint + ".pdf";
                     IOUtil.writeFileToError(PATH_TO_ERROR, path, errorMessage);
+//                    IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + path.getFileName()));
                     return false;
                 }
             } else {
-                LOGGER.debug("COPY PDF to error path");
-                IOUtil.makeBackUpAndDelete(pathOfPDF, Paths.get(PATH_TO_ERROR + "\\" + fileToPrint + ".pdf"));
+                LOGGER.debug("Deze brief moet niet afgedrukt worden van de dokter --> Copy to result path");
+                IOUtil.makeBackUpAndDelete(pathOfPDF, Paths.get(PATH_TO_COPY + "\\" + fileToPrint + ".pdf"));
+//                IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + path.getFileName()));
             }
         } else {
             LOGGER.info("Caregiver is NULL");

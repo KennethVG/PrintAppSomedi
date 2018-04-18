@@ -5,8 +5,8 @@ import be.somedi.printen.model.UMFormat;
 import javax.persistence.*;
 
 @Entity
-//@Table(name = "dbo.Communication_ExternalCaregiver")
-@Table(name = "externalcaregiver")
+@Table(name = "dbo.Communication_ExternalCaregiver")
+//@Table(name = "externalcaregiver")
 public class ExternalCaregiver {
 
     @Id

@@ -27,7 +27,7 @@ public class MediCardTest {
 
     @Before
     public void init() throws IOException {
-        ClassPathResource txtFile = new ClassPathResource("MSE_182670160_2976684_A9564.txt");
+        ClassPathResource txtFile = new ClassPathResource("MSE_182670149_2976686_A4507.txt");
         mediCard.setPathToTxt(txtFile.getFile().toPath());
     }
 
@@ -43,13 +43,13 @@ public class MediCardTest {
                 "Tel.: 015/25.89.11\n" +
                 "\n" +
                 date +
-                "                    R182670160\n" +
+                "                    R182670149\n" +
                 "          Vantrappen Greet\n" +
                 "\n" +
-                "          Van Hool,Theodora\n" +
-                "          Dr.J.Vermylenstraat 14\n" +
-                "          2223 Schriek\n" +
-                "          V               30/06/1954\n" +
+                "          Van Aerde,Liliane\n" +
+                "          Pastoor Van Eycklei 22\n" +
+                "          2221 Booischot\n" +
+                "          V               24/11/1933\n" +
                 "\n" +
                 "\n" +
                 "--------------------------------------------------------------------------------\n" +
@@ -58,14 +58,14 @@ public class MediCardTest {
                 "\n" +
                 "Geachte collega,\n" +
                 "\n" +
-                "Betreft : uw patiënt(e) Van Hool Theodora geboren op 30/06/1954 \n" +
-                " en wonende Dr.J.Vermylenstraat 14 te 2223 Schriek. \n" +
+                "Betreft : uw patiënt(e) Van Aerde Liliane geboren op 24/11/1933 \n" +
+                " en wonende Pastoor Van Eycklei 22 te 2221 Booischot. \n" +
                 "\n" +
-                " Consultatie : 04/01/2018 met referentienr : 182670160 \n" +
+                " Consultatie : 04/01/2018 met referentienr : 182670149 \n" +
                 "\n" +
                 "\n" +
-                "Deze brief zou ook naar Jamar moete gaan. Wordt hier aparte XML voor \n" +
-                "aangemaakt?\n" +
+                "Test met de lettergrootte van Cliniconnect. Te groot, te klein? Ideaal? \n" +
+                "En het Lettertype? Is dit goed leesbaar? \n" +
                 "\n" +
                 "Met vriendelijke groeten,\n" +
                 "Dr. Vantrappen Greet\n" +
