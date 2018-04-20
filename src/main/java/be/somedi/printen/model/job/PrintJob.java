@@ -147,18 +147,15 @@ public class PrintJob {
             if (null != caregiverToPrint.getPrintProtocols() && caregiverToPrint.getPrintProtocols()) {
                 if (isPrinted(pathOfPDF)) {
                     IOUtil.makeBackUpAndDelete(pathOfPDF, Paths.get(PATH_TO_COPY + "\\" + fileToPrint + ".pdf"));
-//                    IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + path.getFileName()));
                     return true;
                 } else {
                     errorMessage = "PDF NOT FOUND: " + fileToPrint + ".pdf";
                     IOUtil.writeFileToError(PATH_TO_ERROR, path, errorMessage);
-//                    IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + path.getFileName()));
                     return false;
                 }
             } else {
                 LOGGER.debug("Deze brief moet niet afgedrukt worden van de dokter --> Copy to result path");
                 IOUtil.makeBackUpAndDelete(pathOfPDF, Paths.get(PATH_TO_COPY + "\\" + fileToPrint + ".pdf"));
-//                IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_ERROR + "\\" + path.getFileName()));
             }
         } else {
             LOGGER.info("Caregiver is NULL");

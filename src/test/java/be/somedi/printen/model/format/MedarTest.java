@@ -38,7 +38,9 @@ public class MedarTest {
         assertEquals("/FROM     : Vantrappen|Prins de Lignestr 1 B0101|3001|Heverlee||1/06979/12/414\n" +
                 "/TO       : Bijdekerke|Schrieksesteenweg 16|2221|Booischot||1/14507/50/004\n" +
                 "/SUBJECT  : Liliane|Van Aerde|Pastoor Van Eycklei 22|2221|Booischot|19331124|V\n" +
-                "/INFO     : Created on 18/04/2018|MDR182670149\n" +
+                "/INFO     : Created on " +
+                date +
+                "|MDR182670149\n" +
                 "\n" +
                 "/TITLE Raadpleging Dr. Vantrappen\n" +
                 "/DATE " +
