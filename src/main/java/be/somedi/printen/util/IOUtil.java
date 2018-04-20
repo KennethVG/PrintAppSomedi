@@ -5,7 +5,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,7 +34,8 @@ public class IOUtil {
         Path path = null;
         try {
             path = Paths.get(pathToUM + "/HEC_" + mnemonic + "R_" + refNr + "R." + ext);
-            Files.write(path, text.getBytes());
+            OutputStream out = new FileOutputStream(path.toFile());
+            out.write(text.getBytes(Charset.forName("windows-1252")));
             LOGGER.debug("Path " + path + " created.");
         } catch (IOException e) {
             e.printStackTrace();
