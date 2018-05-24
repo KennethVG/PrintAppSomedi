@@ -36,6 +36,7 @@ public class IOUtil {
             path = Paths.get(pathToUM + "/HEC_" + mnemonic + "R_" + refNr + "R." + ext);
             OutputStream out = new FileOutputStream(path.toFile());
             out.write(text.getBytes(Charset.forName("windows-1252")));
+            out.close();
             LOGGER.debug("Path " + path + " created.");
         } catch (IOException e) {
             e.printStackTrace();

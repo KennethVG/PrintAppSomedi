@@ -6,7 +6,6 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "dbo.Communication_ExternalCaregiver")
-//@Table(name = "externalcaregiver")
 public class ExternalCaregiver {
 
     @Id

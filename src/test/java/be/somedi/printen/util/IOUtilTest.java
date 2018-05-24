@@ -1,6 +1,5 @@
 package be.somedi.printen.util;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -31,8 +30,8 @@ public class IOUtilTest {
         Assert.assertTrue(Files.exists(result));
     }
 
-    @After
-    public void removeFiles() throws IOException {
-        Files.delete(result);
-    }
+//    @After
+//    public void removeFiles() throws IOException {
+//        Files.delete(result);
+//    }
 }

@@ -4,7 +4,6 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "dbo.PersonalInfo_Person")
-//@Table(name = "person")
 public class Person {
 
     @Id
