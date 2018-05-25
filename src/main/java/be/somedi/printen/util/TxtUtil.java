@@ -30,6 +30,7 @@ public class TxtUtil {
 
     private static final String BETREFT = "Betreft";
     private static final String MET_VRIENDELIJKE_GROETEN = "Met vriendelijke groeten";
+    private static final String MET_COLLEGIALE_GROETEN = "Met collegiale groeten";
     private static final String BESLUIT = "BESLUIT";
 
     private static final int MNEMONIC_LENGTH = 5;
@@ -90,7 +91,7 @@ public class TxtUtil {
                     startIndex = i;
                 } else if (oneLine.contains(BESLUIT)) {
                     startSummaryIndex = i;
-                } else if (oneLine.startsWith(MET_VRIENDELIJKE_GROETEN)) {
+                } else if (oneLine.startsWith(MET_VRIENDELIJKE_GROETEN)|| oneLine.startsWith(MET_COLLEGIALE_GROETEN)) {
                     endIndex = i;
                 }
             }
