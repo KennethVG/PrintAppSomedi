@@ -126,10 +126,13 @@ public class PrintJob {
         }
     }
 
+
     private boolean isPrintAndSendJobSucceeded(Path path) {
         String errorMessage;
         String fileToPrint = FilenameUtils.getBaseName(path.toString()).replace("MSE", "PDF");
         Path pathOfPDF = Paths.get(PATH_TO_READ + "\\" + fileToPrint + ".pdf");
+
+        printAlwaysOneForSpecificCaregevivers(path, pathOfPDF);
 
         if (isPathWithLetterNotToPrint(path)) {
             LOGGER.debug(path + " write error file");
@@ -152,7 +155,7 @@ public class PrintJob {
             sendToUM(caregiverToPrint, path);
 
             if (null != caregiverToPrint.getPrintProtocols() && caregiverToPrint.getPrintProtocols()) {
-                if (isPrinted(pathOfPDF, path)) {
+                if (isPrinted(pathOfPDF)) {
                     IOUtil.makeBackUpAndDelete(pathOfPDF, Paths.get(PATH_TO_COPY + "\\" + fileToPrint + ".pdf"));
                     return true;
                 } else {
@@ -190,7 +193,17 @@ public class PrintJob {
         }
     }
 
-    private boolean isPrinted(Path pathToPDF, Path pathToTxt) {
+    private void printAlwaysOneForSpecificCaregevivers(Path pathToTxt, Path pathToPDF){
+        ExternalCaregiver externalCaregiver = service.findByMnemonic(TxtUtil.getMnemonicAfterUA(pathToTxt));
+        for(CaregiverTwoPrints ct : CaregiverTwoPrints.values()){
+            if(StringUtils.right(externalCaregiver.getExternalID(),4).equalsIgnoreCase( StringUtils.right(ct.name(), 4))) {
+                LOGGER.debug(externalCaregiver.getLastName() + " wilt altijd een print.");
+                isPrinted(pathToPDF);
+            }
+        }
+    }
+
+    private boolean isPrinted(Path pathToPDF) {
         try {
             if (Files.exists(pathToPDF)) {
                 LOGGER.debug("Printing: " + pathToPDF.getFileName());
@@ -200,13 +213,6 @@ public class PrintJob {
                 job.setPrintService(myPrintService);
                 PDDocument document = PDDocument.load(pathToPDF.toFile());
                 document.silentPrint(job);
-
-                ExternalCaregiver externalCaregiver = service.findByMnemonic(TxtUtil.getMnemonicAfterUA(pathToTxt));
-                for(CaregiverTwoPrints ct : CaregiverTwoPrints.values()){
-                    if(StringUtils.right(externalCaregiver.getExternalID(),4).equalsIgnoreCase( StringUtils.right(ct.name(), 4))) {
-                        document.silentPrint(job);
-                    }
-                }
                 document.close();
                 LOGGER.info("Succesfully printed: " + pathToPDF.getFileName());
                 return true;
