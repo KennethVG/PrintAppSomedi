@@ -1,6 +1,7 @@
 package be.somedi.printen.model.job;
 
 import be.somedi.printen.entity.ExternalCaregiver;
+import be.somedi.printen.model.CaregiverTwoPrints;
 import be.somedi.printen.service.ExternalCaregiverService;
 import be.somedi.printen.service.LinkedExternalCargiverService;
 import be.somedi.printen.util.IOUtil;
@@ -141,11 +142,17 @@ public class PrintJob {
         ExternalCaregiver caregiverToPrint = service.findByMnemonic(TxtUtil.getMnemnonic(path));
         LOGGER.info("CaregiverToPrint: " + caregiverToPrint);
         if (null != caregiverToPrint) {
+            if (caregiverToPrint.getPrintProtocols() == null || caregiverToPrint.getPrintProtocols().toString().equals("")) {
+                errorMessage = "De gegevens van deze dokter zijn niet ingevuld (print of niet? formaat? ...): " + caregiverToPrint.getLastName() + " " + caregiverToPrint.getFirstName() + "(" + caregiverToPrint.getExternalID() + ")";
+                IOUtil.writeFileToError(PATH_TO_ERROR, path, errorMessage);
+                return false;
+            }
+
             // SEND TO UM:
             sendToUM(caregiverToPrint, path);
 
             if (null != caregiverToPrint.getPrintProtocols() && caregiverToPrint.getPrintProtocols()) {
-                if (isPrinted(pathOfPDF)) {
+                if (isPrinted(pathOfPDF, path)) {
                     IOUtil.makeBackUpAndDelete(pathOfPDF, Paths.get(PATH_TO_COPY + "\\" + fileToPrint + ".pdf"));
                     return true;
                 } else {
@@ -183,18 +190,25 @@ public class PrintJob {
         }
     }
 
-    private boolean isPrinted(Path path) {
+    private boolean isPrinted(Path pathToPDF, Path pathToTxt) {
         try {
-            if (Files.exists(path)) {
-                LOGGER.debug("Printing: " + path.getFileName());
+            if (Files.exists(pathToPDF)) {
+                LOGGER.debug("Printing: " + pathToPDF.getFileName());
+
                 PrintService myPrintService = PrintServiceLookup.lookupDefaultPrintService();
                 PrinterJob job = PrinterJob.getPrinterJob();
                 job.setPrintService(myPrintService);
-
-                PDDocument document = PDDocument.load(path.toFile());
+                PDDocument document = PDDocument.load(pathToPDF.toFile());
                 document.silentPrint(job);
+
+                ExternalCaregiver externalCaregiver = service.findByMnemonic(TxtUtil.getMnemonicAfterUA(pathToTxt));
+                for(CaregiverTwoPrints ct : CaregiverTwoPrints.values()){
+                    if(StringUtils.right(externalCaregiver.getExternalID(),4).equalsIgnoreCase( StringUtils.right(ct.name(), 4))) {
+                        document.silentPrint(job);
+                    }
+                }
                 document.close();
-                LOGGER.info("Succesfully printed: " + path.getFileName());
+                LOGGER.info("Succesfully printed: " + pathToPDF.getFileName());
                 return true;
             }
         } catch (IOException | PrinterException e) {
