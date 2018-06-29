@@ -40,7 +40,7 @@ public class TxtUtilTest {
     public void testVulAan() throws IOException {
         ClassPathResource resNotToPrint = new ClassPathResource("vulAan.txt");
         Path path = resNotToPrint.getFile().toPath();
-        boolean toPrint = TxtUtil.isPathWithLetterNotToPrint(path);
+        boolean toPrint = TxtUtil.letterContainsVulAan(path);
         assertTrue(toPrint);
     }
 

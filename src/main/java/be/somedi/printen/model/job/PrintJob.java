@@ -22,8 +22,8 @@ import java.awt.print.PrinterJob;
 import java.io.IOException;
 import java.nio.file.*;
 
-import static be.somedi.printen.util.TxtUtil.getErrorMessage;
 import static be.somedi.printen.util.TxtUtil.isPathWithLetterNotToPrint;
+import static be.somedi.printen.util.TxtUtil.letterContainsVulAan;
 
 @Component
 public class PrintJob {
@@ -102,12 +102,12 @@ public class PrintJob {
 
                 for (WatchEvent<?> event : watchKey.pollEvents()) {
                     final Path fileName = (Path) event.context();
-                    LOGGER.debug("Path changed: " + fileName);
+                    LOGGER.debug("Path is gewijzigd: " + fileName);
 
                     final Path path = Paths.get(PATH_TO_READ + "\\" + fileName);
 
                     if (Files.isRegularFile(path) && StringUtils.endsWith(path.toString(), ".txt")) {
-                        LOGGER.debug("Regular file, end with .txt");
+                        LOGGER.debug("File eindigt op txt.");
                         if (isPrintAndSendJobSucceeded(path))
                             IOUtil.makeBackUpAndDelete(path, Paths.get(PATH_TO_COPY + "\\" + fileName));
                         else
@@ -126,22 +126,26 @@ public class PrintJob {
         }
     }
 
-
     private boolean isPrintAndSendJobSucceeded(Path path) {
         String errorMessage;
         String fileToPrint = FilenameUtils.getBaseName(path.toString()).replace("MSE", "PDF");
         Path pathOfPDF = Paths.get(PATH_TO_READ + "\\" + fileToPrint + ".pdf");
 
-        printAlwaysOneForSpecificCaregevivers(path, pathOfPDF);
-
         if (isPathWithLetterNotToPrint(path)) {
-            LOGGER.debug(path + " write error file");
-            IOUtil.writeFileToError(PATH_TO_ERROR, path, getErrorMessage());
-
-            LOGGER.debug("Deze brief hoeft geen print: COPY PDF to error path");
+            LOGGER.debug("Deze brief bevat 'mag weg', 'P.N.' ... --> Verwijder de TXT en PDF direct");
+            IOUtil.deleteFile(pathOfPDF);
+            IOUtil.deleteFile(path);
+            return false;
+        }
+        else if(letterContainsVulAan(path)){
+            LOGGER.debug("Deze brief bevat 'vul aan' --> plaatsen in error folder");
+            IOUtil.writeFileToError(PATH_TO_ERROR, path, "Deze brief bevat ergens in de tekst 'vul_aan'.");
             IOUtil.makeBackUpAndDelete(pathOfPDF, Paths.get(PATH_TO_ERROR + "\\" + fileToPrint + ".pdf"));
             return false;
         }
+
+        printAlwaysOneForSpecificCaregevivers(path, pathOfPDF);
+
         ExternalCaregiver caregiverToPrint = service.findByMnemonic(TxtUtil.getMnemnonic(path));
         LOGGER.info("CaregiverToPrint: " + caregiverToPrint);
         if (null != caregiverToPrint) {
@@ -177,8 +181,12 @@ public class PrintJob {
     }
 
     private void sendToUM(ExternalCaregiver caregiverToPrint, Path path) {
+        ExternalCaregiver caregiverOfLetter = service.findByMnemonic(TxtUtil.getMnemonicAfterUA(path));
+        if(sendToUmJob.formatAndSend(caregiverOfLetter, path)){
+            LOGGER.debug(path + "  verzenden naar UM is gelukt voor dokter die de brief geschreven heeft!");
+        }
         if (sendToUmJob.formatAndSend(caregiverToPrint, path)) {
-            LOGGER.debug(path + "  verzenden naar UM is gelukt!");
+            LOGGER.debug(path + "  verzenden naar UM is gelukt voor dokter in AAN/CC!");
 
             String externalId = caregiverToPrint.getExternalID();
             String linkedId = linkedExternalCargiverService.findLinkedIdByExternalId(externalId);
@@ -193,10 +201,10 @@ public class PrintJob {
         }
     }
 
-    private void printAlwaysOneForSpecificCaregevivers(Path pathToTxt, Path pathToPDF){
+    private void printAlwaysOneForSpecificCaregevivers(Path pathToTxt, Path pathToPDF) {
         ExternalCaregiver externalCaregiver = service.findByMnemonic(TxtUtil.getMnemonicAfterUA(pathToTxt));
-        for(CaregiverTwoPrints ct : CaregiverTwoPrints.values()){
-            if(StringUtils.right(externalCaregiver.getExternalID(),4).equalsIgnoreCase( StringUtils.right(ct.name(), 4))) {
+        for (CaregiverTwoPrints ct : CaregiverTwoPrints.values()) {
+            if (StringUtils.right(externalCaregiver.getExternalID(), 4).equalsIgnoreCase(StringUtils.right(ct.name(), 4))) {
                 LOGGER.debug(externalCaregiver.getLastName() + " wilt altijd een print.");
                 isPrinted(pathToPDF);
             }
@@ -206,7 +214,7 @@ public class PrintJob {
     private boolean isPrinted(Path pathToPDF) {
         try {
             if (Files.exists(pathToPDF)) {
-                LOGGER.debug("Printing: " + pathToPDF.getFileName());
+                LOGGER.debug("Aan het printen: " + pathToPDF.getFileName());
 
                 PrintService myPrintService = PrintServiceLookup.lookupDefaultPrintService();
                 PrinterJob job = PrinterJob.getPrinterJob();
@@ -214,7 +222,7 @@ public class PrintJob {
                 PDDocument document = PDDocument.load(pathToPDF.toFile());
                 document.silentPrint(job);
                 document.close();
-                LOGGER.info("Succesfully printed: " + pathToPDF.getFileName());
+                LOGGER.info("Geprint: " + pathToPDF.getFileName());
                 return true;
             }
         } catch (IOException | PrinterException e) {

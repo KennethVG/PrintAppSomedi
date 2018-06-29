@@ -1,7 +1,6 @@
 package be.somedi.printen.model.format;
 
 import be.somedi.printen.entity.ExternalCaregiver;
-import be.somedi.printen.entity.Person;
 import be.somedi.printen.model.UMFormat;
 import be.somedi.printen.service.ExternalCaregiverService;
 import be.somedi.printen.service.PatientService;
@@ -24,16 +23,15 @@ public class Medar extends BaseFormat {
     public String buildDocument() {
         ExternalCaregiver specialist = getSpecialistOfSomedi();
         ExternalCaregiver toSend = getCaregiverToSendLetter();
-        Person patientInfo = getPatientDetails();
 
         String[] specialistIds = {specialist.getLastName(), specialist.getStreetWithNumber(), specialist.getZip(),
                 specialist.getCity(), "", formatRiziv(specialist.getNihii())};
         String[] specialistToSendIds = {toSend.getLastName(), toSend.getStreetWithNumber(), toSend.getZip(), toSend
                 .getCity(), "", formatRiziv(toSend.getNihii())};
-        String[] patientIds = {patientInfo.getFirstName(), patientInfo.getLastName(), getStreetWithNumberAfterPS(getPathToTxt()),
+        String[] patientIds = {getFirstNameAfterPV(getPathToTxt()), getNameAfterPN(getPathToTxt()), getStreetWithNumberAfterPS(getPathToTxt()),
                 getZipCodeAfterPP(getPathToTxt()), getCityAfterPA(getPathToTxt()), formatDate(getBirthDateAtferPD(getPathToTxt()), "yyyyMMdd"),
                 formatGender(getExternalIdAfterPC(getPathToTxt())).name()};
-        String [] info = {"Created on " + formatDate(), "MDR" + getRefNr()};
+        String[] info = {"Created on " + formatDate(), "MDR" + getRefNr()};
 
 
         StrBuilder result = new StrBuilder();

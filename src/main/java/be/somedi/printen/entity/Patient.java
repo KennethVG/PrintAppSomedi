@@ -13,7 +13,7 @@ public class Patient {
     private String externalId;
 
     @Column(name = "person_id")
-    private int personId;
+    private Long personId;
 
     public Long getId() {
         return id;
@@ -23,7 +23,7 @@ public class Patient {
         return externalId;
     }
 
-    public int getPersonId() {
+    public Long getPersonId() {
         return personId;
     }
 }

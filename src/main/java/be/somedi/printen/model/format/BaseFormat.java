@@ -43,21 +43,21 @@ public abstract class BaseFormat {
                 (pathToTxt));
     }
 
-    public Patient getPatient(){
+    public Patient getPatient() {
         String externalId = TxtUtil.getExternalIdAfterPC(getPathToTxt());
         return getPatientService().findByExternalId(externalId);
     }
 
-    public Person getPatientDetails(){
-        return getPersonService().findById((long) getPatient().getPersonId());
+    public Person getPatientDetails() {
+        Patient patient = getPatient();
+        if (patient.getPersonId() != null) {
+            return getPersonService().findById(getPatient().getPersonId());
+        }
+        return null;
     }
 
-    public String getRefNr(){
+    public String getRefNr() {
         return TxtUtil.getRefNrAfterPR(getPathToTxt());
-    }
-
-    public ExternalCaregiverService getExternalCaregiverService() {
-        return externalCaregiverService;
     }
 
     public PatientService getPatientService() {
@@ -81,15 +81,15 @@ public abstract class BaseFormat {
     }
 
     public Path makeAdrFile(Path pathToUm, ExternalCaregiver caregiverToSend) {
-        String first8NumbersOfrizivFromCaregiverToSend = StringUtils.left(caregiverToSend.getNihiiAddress()!=null?caregiverToSend.getNihiiAddress():caregiverToSend.getNihii(), NUMBER_OF_RIZIV);
+        String first8NumbersOfrizivFromCaregiverToSend = StringUtils.left(caregiverToSend.getNihiiAddress() == null || caregiverToSend.getNihiiAddress().equalsIgnoreCase("NULL") ? caregiverToSend.getNihii() : caregiverToSend.getNihiiAddress(), NUMBER_OF_RIZIV);
         return IOUtil.writeFileToUM(pathToUm, caregiverToSend.getExternalID(), getRefNr(), "ADR", first8NumbersOfrizivFromCaregiverToSend);
     }
 
-    public String buildStart(){
+    public String buildStart() {
         return "Geachte collega,\n\n";
     }
 
-    public String buildEnd(){
+    public String buildEnd() {
         return "Met vriendelijke groeten,\n" + getSpecialistOfSomedi().getTitle() + " " + getSpecialistOfSomedi()
                 .getLastName() + " " + getSpecialistOfSomedi().getFirstName() + "\n";
     }

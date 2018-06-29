@@ -68,9 +68,12 @@ public class Medidoc extends BaseFormat {
 
         StringBuilder result = new StringBuilder();
         Person person = getPatientDetails();
-
-        //LINE1: Aanduiding (Format: #ArrnPatiënt)
-        result.append("#A").append(person.getInss()).append("\n");
+        if (person != null) {
+            //LINE1: Aanduiding (Format: #ArrnPatiënt)
+            result.append("#A").append(person.getInss()).append("\n");
+        } else {
+            result.append("#A").append("INSS onbekend").append("\n");
+        }
 
         //LINE2: Naam (24) en voornaam (max.16) patiënt
         result.append(formatStringWithBlanks(TxtUtil.getNameAfterPN(getPathToTxt()), 24));

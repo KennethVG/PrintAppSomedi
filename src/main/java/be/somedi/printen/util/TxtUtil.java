@@ -31,7 +31,9 @@ public class TxtUtil {
     private static final String BETREFT = "Betreft";
     private static final String MET_VRIENDELIJKE_GROETEN = "Met vriendelijke groeten";
     private static final String MET_COLLEGIALE_GROETEN = "Met collegiale groeten";
+    private static final String MET_COLLEGIALE_HOOGACHTNG = "Met collegiale hoogachting";
     private static final String BESLUIT = "BESLUIT";
+    private static final String VUL_AAN = "vul_aan";
 
     private static final int MNEMONIC_LENGTH = 5;
     private static final int LINE_LENGTH = 75;
@@ -42,20 +44,26 @@ public class TxtUtil {
     private static final String CHARSET_NAME = "windows-1252";
     private static final Logger LOGGER = LoggerFactory.getLogger(TxtUtil.class);
 
-    private static String errorMessage;
+
+    public static boolean letterContainsVulAan(Path pathToTxt) {
+        long count = 0;
+        try {
+            count = Files.lines(pathToTxt, Charset.forName(CHARSET_NAME)).filter(line -> line.contains(VUL_AAN)).count();
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
+        }
+        return count > 0;
+    }
+
 
     public static boolean isPathWithLetterNotToPrint(Path pathToTxt) {
         boolean notToPrint = false;
         try {
             String externalId = getTextAfterKeyword(DR, pathToTxt);
-            if(externalId == null || externalId.equals("")){
-                errorMessage = "Dit is geen verslag";
+            if (externalId == null || externalId.equals("")) {
                 LOGGER.info("Dit is geen verslag.");
                 return true;
-            }
-            else if (externalId.length() > EXTERNALID_MAX_LENGTH) {
-                errorMessage = "Dit verslag niet verwerken, #DR = EMD... , dit is een geadresseerde die niet moet " +
-                        "bewaard worden";
+            } else if (externalId.length() > EXTERNALID_MAX_LENGTH) {
                 LOGGER.info(DR + " of " + pathToTxt.getFileName() + " is groter dan 15 --> NIET PRINTEN!");
                 return true;
             }
@@ -66,7 +74,6 @@ public class TxtUtil {
 
             if (count > 0) {
                 notToPrint = true;
-                errorMessage = "Onvolledig verslag vul_aan, P.N. of ... staat als tekst in verslag";
             }
 
         } catch (IOException e) {
@@ -91,7 +98,7 @@ public class TxtUtil {
                     startIndex = i;
                 } else if (oneLine.contains(BESLUIT)) {
                     startSummaryIndex = i;
-                } else if (oneLine.startsWith(MET_VRIENDELIJKE_GROETEN)|| oneLine.startsWith(MET_COLLEGIALE_GROETEN)) {
+                } else if (oneLine.startsWith(MET_VRIENDELIJKE_GROETEN) || oneLine.startsWith(MET_COLLEGIALE_GROETEN) || oneLine.startsWith(MET_COLLEGIALE_HOOGACHTNG)) {
                     endIndex = i;
                 }
             }
@@ -128,10 +135,6 @@ public class TxtUtil {
             LOGGER.error(e.getMessage());
         }
         return result.toString().trim();
-    }
-
-    public static String getErrorMessage() {
-        return errorMessage;
     }
 
     public static String getMnemonicAfterUA(Path pathToTxt) {

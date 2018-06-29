@@ -23,7 +23,7 @@ public class IOUtil {
         try {
             path = Files.write(Paths.get(pathToError + "\\" + FilenameUtils.getBaseName(pathToTxt.toString()) + "" +
                     ".err"), errormessage.getBytes());
-            LOGGER.debug("Created error file: " + path);
+            LOGGER.debug("Maak error file: " + path);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -37,7 +37,7 @@ public class IOUtil {
             OutputStream out = new FileOutputStream(path.toFile());
             out.write(text.getBytes(Charset.forName("windows-1252")));
             out.close();
-            LOGGER.debug("Path " + path + " created.");
+            LOGGER.debug("Path " + path + " aangemaakt.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -46,7 +46,7 @@ public class IOUtil {
 
     public static boolean makeBackUpAndDelete(Path fromPath, Path toPath) {
         if (Files.exists(fromPath)) {
-            LOGGER.debug("Make backup: from " + fromPath + " to " + toPath);
+            LOGGER.debug("Maak backup: van " + fromPath + " naar " + toPath);
             try {
                 Files.copy(fromPath, toPath, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
@@ -57,7 +57,15 @@ public class IOUtil {
                 return false;
             }
         }
-        LOGGER.warn("PATH does not exist: " + fromPath);
+        LOGGER.warn("PATH bestaat niet: " + fromPath);
         return true;
+    }
+
+    public static void deleteFile(Path path){
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+           LOGGER.error("Verwijderen van " + path + " is niet gelukt!");
+        }
     }
 }
