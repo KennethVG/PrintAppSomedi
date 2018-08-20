@@ -205,6 +205,8 @@ public class PrintJob {
             } else {
                 LOGGER.warn(path + " verzenden naar UM is NIET gelukt!");
             }
+        } else {
+            LOGGER.info("Deze dokter wil geen elektronische protocols.");
         }
     }
 
