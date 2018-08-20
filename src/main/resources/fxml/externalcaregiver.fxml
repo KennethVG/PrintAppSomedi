@@ -6,21 +6,23 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="687.0" prefWidth="644.0" stylesheets="@../css/application.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.somedi.printen.javafx.ExternalCaregiverViewController">
+<AnchorPane prefHeight="687.0" prefWidth="721.0" stylesheets="@../css/application.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.somedi.printen.javafx.ExternalCaregiverViewController">
     <Button focusTraversable="false" layoutX="63.0" layoutY="572.0" mnemonicParsing="false" onAction="#startPrintJob" text="Start Printjob" />
     <Button focusTraversable="false" layoutX="64.0" layoutY="631.0" mnemonicParsing="false" onAction="#stopPrintJob" text="Stop Printjob" />
     <Label fx:id="lblJobResult" alignment="CENTER" contentDisplay="CENTER" layoutX="187.0" layoutY="608.0" prefHeight="18.0" prefWidth="270.0" textAlignment="CENTER" />
     <Label id="title" layoutX="211.0" layoutY="28.0" text="Wijzig gegevens dokter" />
     <TextField fx:id="txtExternalId" layoutX="236.0" layoutY="76.0" prefHeight="25.0" prefWidth="128.0" promptText="mnemonic" />
-    <Label fx:id="lblSearchResult" layoutX="63.0" layoutY="148.0" prefHeight="28.0" prefWidth="320.0" />
-    <ChoiceBox fx:id="cbPrintProtocols" layoutX="406.0" layoutY="149.0" prefWidth="150.0" />
-    <Button fx:id="updateDokter" focusTraversable="false" layoutX="416.0" layoutY="430.0" mnemonicParsing="false" onAction="#updateDokter" text="Update dokter" />
+    <Label fx:id="lblSearchResult" layoutX="27.0" layoutY="153.0" prefHeight="28.0" prefWidth="366.0" />
+    <ChoiceBox fx:id="cbPrintProtocols" layoutX="484.0" layoutY="148.0" prefWidth="150.0" />
+    <Button fx:id="updateDokter" focusTraversable="false" layoutX="494.0" layoutY="503.0" mnemonicParsing="false" onAction="#updateDokter" text="Update dokter" />
     <Button focusTraversable="false" layoutX="378.0" layoutY="76.0" mnemonicParsing="false" onAction="#zoekDokter" text="Zoek dokter" />
-    <Label fx:id="lblPrint" layoutX="410.0" layoutY="120.0" text="Wenst papieren protocols?" />
-   <Label fx:id="lblFormat" layoutX="409.0" layoutY="272.0" text="Wijzig formaat:" />
-   <ChoiceBox fx:id="cbFormaat" layoutX="406.0" layoutY="300.0" prefWidth="150.0" />
-   <Label fx:id="lblRiziv" layoutX="410.0" layoutY="344.0" text="Wijzig riziv adres:" />
-   <TextField fx:id="txtRizivAdres" layoutX="406.0" layoutY="372.0" prefHeight="22.0" prefWidth="150.0" />
-   <Label fx:id="lblEPrint" layoutX="410.0" layoutY="197.0" text="Wenst elektronische protocols?" />
-   <ChoiceBox fx:id="cbEProtocols" layoutX="410.0" layoutY="222.0" prefWidth="150.0" />
+    <Label fx:id="lblPrint" layoutX="488.0" layoutY="119.0" text="Wenst papieren protocols?" />
+   <Label fx:id="lblFormat" layoutX="487.0" layoutY="271.0" text="Wijzig formaat:" />
+   <ChoiceBox fx:id="cbFormaat" layoutX="484.0" layoutY="299.0" prefWidth="150.0" />
+   <Label fx:id="lblRiziv" layoutX="488.0" layoutY="343.0" text="Wijzig riziv adres:" />
+   <TextField fx:id="txtRizivAdres" layoutX="484.0" layoutY="371.0" prefHeight="22.0" prefWidth="150.0" />
+   <Label fx:id="lblEPrint" layoutX="488.0" layoutY="196.0" text="Wenst elektronische protocols?" />
+   <ChoiceBox fx:id="cbEProtocols" layoutX="484.0" layoutY="224.0" prefWidth="150.0" />
+   <Label fx:id="lblKopie" layoutX="488.0" layoutY="418.0" text="Kopie aan (mnemonic): " />
+   <TextField fx:id="txtKopie" layoutX="484.0" layoutY="446.0" prefHeight="22.0" prefWidth="150.0" />
 </AnchorPane>

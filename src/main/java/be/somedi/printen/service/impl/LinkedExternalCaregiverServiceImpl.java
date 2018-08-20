@@ -6,6 +6,9 @@ import be.somedi.printen.service.LinkedExternalCargiverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.rtf.RTFEditorKit;
+import javax.transaction.Transactional;
+
 @Service
 public class LinkedExternalCaregiverServiceImpl implements LinkedExternalCargiverService {
 
@@ -17,12 +20,20 @@ public class LinkedExternalCaregiverServiceImpl implements LinkedExternalCargive
     }
 
     @Override
-    public String findLinkedIdByExternalId(String externalId) {
-        LinkedExternalCaregiver linkedExternalCaregiver = linkedExternalCargiverRepository.findByExternalId(externalId);
-        if (linkedExternalCaregiver != null) {
-            String result = linkedExternalCaregiver.getLinkedId();
-            return result.length() == 5 ? result : null;
-        }
-        return null;
+    public LinkedExternalCaregiver findLinkedIdByExternalId(String externalId) {
+        return linkedExternalCargiverRepository.findByExternalId(externalId);
     }
+
+    @Override
+    @Transactional
+    public int updateLinkedExternalCaregiver(LinkedExternalCaregiver linkedExternalCaregiver) {
+        LinkedExternalCaregiver searchedCaregiver = findLinkedIdByExternalId(linkedExternalCaregiver.getExternalId());
+        if (searchedCaregiver != null) {
+            linkedExternalCargiverRepository.updateLinkedExternalCaregiver(searchedCaregiver.getExternalId(), linkedExternalCaregiver.getLinkedId());
+            return 1;
+        }
+        LinkedExternalCaregiver caregiver = linkedExternalCargiverRepository.save(linkedExternalCaregiver);
+        return caregiver != null ? 1 : 0;
+    }
+
 }

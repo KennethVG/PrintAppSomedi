@@ -24,6 +24,14 @@ public class LinkedExternalCaregiver {
     public String getLinkedId() {
         return linkedId;
     }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
+
+    public void setLinkedId(String linkedId) {
+        this.linkedId = linkedId;
+    }
 }
 
 class LinkedExternalCaregiverPk implements Serializable {

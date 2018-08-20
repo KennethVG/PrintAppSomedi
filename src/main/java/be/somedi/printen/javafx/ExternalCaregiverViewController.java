@@ -1,10 +1,12 @@
 package be.somedi.printen.javafx;
 
 import be.somedi.printen.entity.ExternalCaregiver;
+import be.somedi.printen.entity.LinkedExternalCaregiver;
 import be.somedi.printen.mapper.FormatMapper;
 import be.somedi.printen.model.UMFormat;
 import be.somedi.printen.service.ExternalCaregiverService;
 import be.somedi.printen.model.job.PrintJob;
+import be.somedi.printen.service.LinkedExternalCargiverService;
 import ch.qos.logback.core.util.ExecutorServiceUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,11 +25,12 @@ import java.util.stream.Collectors;
 public class ExternalCaregiverViewController {
 
     private final ExternalCaregiverService service;
+    private final LinkedExternalCargiverService linkedExternalCargiverService;
     private final PrintJob printPDF;
 
     private ExecutorService executorService;
     private ExternalCaregiver caregiverToUpdate;
-    private List<String> listOfPrintValues;
+    private LinkedExternalCaregiver linkedExternalCaregiverToUpdate;
 
     @FXML
     private Label lblJobResult;
@@ -35,22 +38,24 @@ public class ExternalCaregiverViewController {
     private Label lblSearchResult;
     @FXML
     private Label lblPrint;
-
     @FXML
     private Label lblEPrint;
     @FXML
     private Label lblFormat;
     @FXML
     private Label lblRiziv;
+    @FXML
+    private Label lblKopie;
 
     @FXML
     private TextField txtExternalId;
     @FXML
     private TextField txtRizivAdres;
+    @FXML
+    private TextField txtKopie;
 
     @FXML
     private ChoiceBox<String> cbPrintProtocols;
-
     @FXML
     private ChoiceBox<String> cbEProtocols;
     @FXML
@@ -61,8 +66,9 @@ public class ExternalCaregiverViewController {
 
 
     @Autowired
-    public ExternalCaregiverViewController(ExternalCaregiverService service, PrintJob printPDF) {
+    public ExternalCaregiverViewController(ExternalCaregiverService service, LinkedExternalCargiverService linkedExternalCargiverService, PrintJob printPDF) {
         this.service = service;
+        this.linkedExternalCargiverService = linkedExternalCargiverService;
         this.printPDF = printPDF;
     }
 
@@ -85,14 +91,28 @@ public class ExternalCaregiverViewController {
         caregiverToUpdate.setPrintProtocols(cbPrintProtocols.getValue().equals("ja"));
         caregiverToUpdate.seteProtocols(cbEProtocols.getValue().equals("ja"));
 
-
         String selectedFormatValue = cbFormaat.getValue();
         caregiverToUpdate.setFormat(FormatMapper.mapToFormat(selectedFormatValue));
         caregiverToUpdate.setNihiiAddress(txtRizivAdres.getText());
 
+
+        ExternalCaregiver ec = service.findByMnemonic(txtKopie.getText());
+
+        int kopie = 0;
+        if (ec != null) {
+            if(linkedExternalCaregiverToUpdate == null){
+                linkedExternalCaregiverToUpdate = new LinkedExternalCaregiver();
+            }
+            linkedExternalCaregiverToUpdate.setExternalId(txtExternalId.getText());
+            linkedExternalCaregiverToUpdate.setLinkedId(txtKopie.getText());
+            kopie = linkedExternalCargiverService.updateLinkedExternalCaregiver(linkedExternalCaregiverToUpdate);
+        }
         int result = service.updateExternalCaregiver(caregiverToUpdate);
         if (result == 1) {
             lblSearchResult.setText("Dokter " + caregiverToUpdate.getLastName() + " is met succes geüpdatet!");
+            if (kopie == 1) {
+                lblSearchResult.setText("Dokter " + caregiverToUpdate.getLastName() + " is met succes geüpdatet! en kopie naar andere dokter is in orde!");
+            }
         } else
             lblSearchResult.setText("Update mislukt!");
     }
@@ -116,6 +136,9 @@ public class ExternalCaregiverViewController {
             txtRizivAdres.setText(caregiverToUpdate.getNihiiAddress() != null ? caregiverToUpdate.getNihiiAddress() :
                     caregiverToUpdate.getNihii());
 
+            linkedExternalCaregiverToUpdate = linkedExternalCargiverService.findLinkedIdByExternalId(caregiverToUpdate.getExternalID());
+            txtKopie.setText(linkedExternalCaregiverToUpdate != null ? linkedExternalCaregiverToUpdate.getLinkedId() : "");
+
         } else {
             lblSearchResult.setText("Deze mnemonic bestaat niet in de Cliniconnect database");
         }
@@ -137,15 +160,19 @@ public class ExternalCaregiverViewController {
     }
 
     private void setVisibility(boolean visible) {
-        cbPrintProtocols.setVisible(visible);
-        cbEProtocols.setVisible(visible);
         updateDokter.setVisible(visible);
+
         lblPrint.setVisible(visible);
         lblEPrint.setVisible(visible);
-
+        lblKopie.setVisible(visible);
         lblFormat.setVisible(visible);
         lblRiziv.setVisible(visible);
+
         cbFormaat.setVisible(visible);
+        cbPrintProtocols.setVisible(visible);
+        cbEProtocols.setVisible(visible);
+
         txtRizivAdres.setVisible(visible);
+        txtKopie.setVisible(visible);
     }
 }

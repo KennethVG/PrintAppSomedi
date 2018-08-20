@@ -1,6 +1,7 @@
 package be.somedi.printen.model.job;
 
 import be.somedi.printen.entity.ExternalCaregiver;
+import be.somedi.printen.entity.LinkedExternalCaregiver;
 import be.somedi.printen.model.CaregiverTwoPrints;
 import be.somedi.printen.service.ExternalCaregiverService;
 import be.somedi.printen.service.LinkedExternalCargiverService;
@@ -193,9 +194,9 @@ public class PrintJob {
             if (sendToUmJob.formatAndSend(caregiverToPrint, path)) {
                 LOGGER.debug(path + "  verzenden naar UM is gelukt voor dokter in AAN/CC!");
                 String externalId = caregiverToPrint.getExternalID();
-                String linkedId = linkedExternalCargiverService.findLinkedIdByExternalId(externalId);
-                if (linkedId != null) {
-                    ExternalCaregiver caregiverToSendCopy = service.findByMnemonic(linkedId);
+                LinkedExternalCaregiver linkedExternalCaregiver = linkedExternalCargiverService.findLinkedIdByExternalId(externalId);
+                if (linkedExternalCaregiver != null) {
+                    ExternalCaregiver caregiverToSendCopy = service.findByMnemonic(linkedExternalCaregiver.getLinkedId());
                     if (caregiverToSendCopy != null) {
                         if (sendToUmJob.formatAndSend(caregiverToSendCopy, path)) {
                             LOGGER.debug(path + " copy verzenden naar UM is gelukt!");
