@@ -50,7 +50,7 @@ public abstract class BaseFormat {
 
     public Person getPatientDetails() {
         Patient patient = getPatient();
-        if (patient.getPersonId() != null) {
+        if (patient != null) {
             return getPersonService().findById(getPatient().getPersonId());
         }
         return null;

@@ -202,6 +202,7 @@ public class PrintJob {
                         }
                     }
                 }
+
             } else {
                 LOGGER.warn(path + " verzenden naar UM is NIET gelukt!");
             }
