@@ -2,7 +2,6 @@ package be.somedi.printen.javafx;
 
 import be.somedi.printen.entity.ExternalCaregiver;
 import be.somedi.printen.mapper.FormatMapper;
-import be.somedi.printen.model.PrintProtocols;
 import be.somedi.printen.model.UMFormat;
 import be.somedi.printen.service.ExternalCaregiverService;
 import be.somedi.printen.model.job.PrintJob;
@@ -36,6 +35,9 @@ public class ExternalCaregiverViewController {
     private Label lblSearchResult;
     @FXML
     private Label lblPrint;
+
+    @FXML
+    private Label lblEPrint;
     @FXML
     private Label lblFormat;
     @FXML
@@ -48,6 +50,9 @@ public class ExternalCaregiverViewController {
 
     @FXML
     private ChoiceBox<String> cbPrintProtocols;
+
+    @FXML
+    private ChoiceBox<String> cbEProtocols;
     @FXML
     private ChoiceBox<String> cbFormaat;
 
@@ -66,9 +71,8 @@ public class ExternalCaregiverViewController {
 
         setVisibility(false);
 
-        listOfPrintValues = Arrays.stream(PrintProtocols.values()).map(pp -> pp.name().toLowerCase()).collect
-                (Collectors.toList());
-        cbPrintProtocols.getItems().addAll(listOfPrintValues);
+        cbPrintProtocols.getItems().addAll("ja", "nee");
+        cbEProtocols.getItems().addAll("ja", "nee");
 
         List<String> listOfFormats = Arrays.stream(UMFormat.values()).map(format -> format.name().toLowerCase()).collect
                 (Collectors.toList());
@@ -77,12 +81,10 @@ public class ExternalCaregiverViewController {
 
     @FXML
     private void updateDokter() {
-        String selectedPrintValue = cbPrintProtocols.getValue();
-        if (selectedPrintValue.equals("ja")) {
-            caregiverToUpdate.setPrintProtocols(true);
-        } else {
-            caregiverToUpdate.setPrintProtocols(false);
-        }
+
+        caregiverToUpdate.setPrintProtocols(cbPrintProtocols.getValue().equals("ja"));
+        caregiverToUpdate.seteProtocols(cbEProtocols.getValue().equals("ja"));
+
 
         String selectedFormatValue = cbFormaat.getValue();
         caregiverToUpdate.setFormat(FormatMapper.mapToFormat(selectedFormatValue));
@@ -108,8 +110,8 @@ public class ExternalCaregiverViewController {
                     caregiverToUpdate.getFirstName());
             setVisibility(true);
 
-            cbPrintProtocols.setValue(caregiverToUpdate.getPrintProtocols() ? listOfPrintValues.get(0) :
-                    listOfPrintValues.get(1));
+            cbPrintProtocols.setValue(caregiverToUpdate.getPrintProtocols() ? "ja" : "nee");
+            cbEProtocols.setValue(caregiverToUpdate.geteProtocols() ? "ja" : "nee");
             cbFormaat.setValue(caregiverToUpdate.getFormat().name().toLowerCase());
             txtRizivAdres.setText(caregiverToUpdate.getNihiiAddress() != null ? caregiverToUpdate.getNihiiAddress() :
                     caregiverToUpdate.getNihii());
@@ -136,8 +138,10 @@ public class ExternalCaregiverViewController {
 
     private void setVisibility(boolean visible) {
         cbPrintProtocols.setVisible(visible);
+        cbEProtocols.setVisible(visible);
         updateDokter.setVisible(visible);
         lblPrint.setVisible(visible);
+        lblEPrint.setVisible(visible);
 
         lblFormat.setVisible(visible);
         lblRiziv.setVisible(visible);

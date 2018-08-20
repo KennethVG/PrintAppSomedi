@@ -6,19 +6,21 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="599.0" prefWidth="600.0" stylesheets="@../css/application.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.somedi.printen.javafx.ExternalCaregiverViewController">
-    <Button focusTraversable="false" layoutX="63.0" layoutY="472.0" mnemonicParsing="false" onAction="#startPrintJob" text="Start Printjob" />
-    <Button focusTraversable="false" layoutX="64.0" layoutY="531.0" mnemonicParsing="false" onAction="#stopPrintJob" text="Stop Printjob" />
-    <Label fx:id="lblJobResult" alignment="CENTER" contentDisplay="CENTER" layoutX="194.0" layoutY="507.0" prefHeight="18.0" prefWidth="270.0" textAlignment="CENTER" />
+<AnchorPane prefHeight="687.0" prefWidth="644.0" stylesheets="@../css/application.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="be.somedi.printen.javafx.ExternalCaregiverViewController">
+    <Button focusTraversable="false" layoutX="63.0" layoutY="572.0" mnemonicParsing="false" onAction="#startPrintJob" text="Start Printjob" />
+    <Button focusTraversable="false" layoutX="64.0" layoutY="631.0" mnemonicParsing="false" onAction="#stopPrintJob" text="Stop Printjob" />
+    <Label fx:id="lblJobResult" alignment="CENTER" contentDisplay="CENTER" layoutX="187.0" layoutY="608.0" prefHeight="18.0" prefWidth="270.0" textAlignment="CENTER" />
     <Label id="title" layoutX="211.0" layoutY="28.0" text="Wijzig gegevens dokter" />
     <TextField fx:id="txtExternalId" layoutX="236.0" layoutY="76.0" prefHeight="25.0" prefWidth="128.0" promptText="mnemonic" />
     <Label fx:id="lblSearchResult" layoutX="63.0" layoutY="148.0" prefHeight="28.0" prefWidth="320.0" />
     <ChoiceBox fx:id="cbPrintProtocols" layoutX="406.0" layoutY="149.0" prefWidth="150.0" />
-    <Button fx:id="updateDokter" layoutX="415.0" layoutY="344.0" mnemonicParsing="false" onAction="#updateDokter" text="Update dokter" />
+    <Button fx:id="updateDokter" focusTraversable="false" layoutX="416.0" layoutY="430.0" mnemonicParsing="false" onAction="#updateDokter" text="Update dokter" />
     <Button focusTraversable="false" layoutX="378.0" layoutY="76.0" mnemonicParsing="false" onAction="#zoekDokter" text="Zoek dokter" />
     <Label fx:id="lblPrint" layoutX="410.0" layoutY="120.0" text="Wenst papieren protocols?" />
-   <Label fx:id="lblFormat" layoutX="416.0" layoutY="192.0" text="Wijzig formaat:" />
-   <ChoiceBox fx:id="cbFormaat" layoutX="406.0" layoutY="215.0" prefWidth="150.0" />
-   <Label fx:id="lblRiziv" layoutX="411.0" layoutY="257.0" text="Wijzig riziv adres:" />
-   <TextField fx:id="txtRizivAdres" layoutX="408.0" layoutY="289.0" prefHeight="22.0" prefWidth="150.0" />
+   <Label fx:id="lblFormat" layoutX="409.0" layoutY="272.0" text="Wijzig formaat:" />
+   <ChoiceBox fx:id="cbFormaat" layoutX="406.0" layoutY="300.0" prefWidth="150.0" />
+   <Label fx:id="lblRiziv" layoutX="410.0" layoutY="344.0" text="Wijzig riziv adres:" />
+   <TextField fx:id="txtRizivAdres" layoutX="406.0" layoutY="372.0" prefHeight="22.0" prefWidth="150.0" />
+   <Label fx:id="lblEPrint" layoutX="410.0" layoutY="197.0" text="Wenst elektronische protocols?" />
+   <ChoiceBox fx:id="cbEProtocols" layoutX="410.0" layoutY="222.0" prefWidth="150.0" />
 </AnchorPane>
