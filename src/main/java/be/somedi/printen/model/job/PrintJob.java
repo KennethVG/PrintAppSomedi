@@ -186,13 +186,12 @@ public class PrintJob {
             IOUtil.writeFileToError(PATH_TO_ERROR, path, "Deze brief is niet verzonden naar UM: SPECIALIST van Somedi is null. " +
                     "Geef de specialist een formaat, een nihiiadres en vul in of hij print wilt of niet! De brief is wel goed geprint. " +
                     "Zoek in result terug naar de pdf en txt en plaats deze in NEW als alle gegevens ingevuld zijn!");
-        } else {
+        } else if (caregiverOfLetter.geteProtocols() != null && caregiverOfLetter.geteProtocols()) {
             if (sendToUmJob.formatAndSend(caregiverOfLetter, path)) {
                 LOGGER.debug(path + "  verzenden naar UM is gelukt voor dokter die de brief geschreven heeft!");
             }
             if (sendToUmJob.formatAndSend(caregiverToPrint, path)) {
                 LOGGER.debug(path + "  verzenden naar UM is gelukt voor dokter in AAN/CC!");
-
                 String externalId = caregiverToPrint.getExternalID();
                 String linkedId = linkedExternalCargiverService.findLinkedIdByExternalId(externalId);
                 if (linkedId != null) {

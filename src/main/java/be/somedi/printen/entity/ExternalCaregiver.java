@@ -23,6 +23,7 @@ public class ExternalCaregiver {
     private String title;
     private Boolean printProtocols;
     private String nihiiAddress;
+    private Boolean eProtocols;
 
     @Enumerated(EnumType.STRING)
     private UMFormat format;
@@ -75,6 +76,14 @@ public class ExternalCaregiver {
         this.printProtocols = printProtocols;
     }
 
+    public Boolean geteProtocols() {
+        return eProtocols;
+    }
+
+    public void seteProtocols(Boolean eProtocols) {
+        this.eProtocols = eProtocols;
+    }
+
     public String getNihiiAddress() {
         return nihiiAddress;
     }
@@ -106,6 +115,7 @@ public class ExternalCaregiver {
                 ", title='" + title + '\'' +
                 ", printProtocols=" + printProtocols +
                 ", nihiiAddress='" + nihiiAddress + '\'' +
+                ", eProtocols=" + eProtocols +
                 ", format=" + format +
                 '}';
     }
