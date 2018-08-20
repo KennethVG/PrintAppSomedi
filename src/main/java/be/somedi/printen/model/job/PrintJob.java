@@ -8,9 +8,9 @@ import be.somedi.printen.util.IOUtil;
 import be.somedi.printen.util.TxtUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -41,7 +41,8 @@ public class PrintJob {
 
     private WatchService watchService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PrintJob.class);
+
+    private static final Logger LOGGER = LogManager.getLogger(PrintJob.class);
 
     @Autowired
     public PrintJob(ExternalCaregiverService service, LinkedExternalCargiverService linkedExternalCargiverService,
@@ -136,8 +137,7 @@ public class PrintJob {
             IOUtil.deleteFile(pathOfPDF);
             IOUtil.deleteFile(path);
             return false;
-        }
-        else if(letterContainsVulAan(path)){
+        } else if (letterContainsVulAan(path)) {
             LOGGER.debug("Deze brief bevat 'vul aan' --> plaatsen in error folder");
             IOUtil.writeFileToError(PATH_TO_ERROR, path, "Deze brief bevat ergens in de tekst 'vul_aan'.");
             IOUtil.makeBackUpAndDelete(pathOfPDF, Paths.get(PATH_TO_ERROR + "\\" + fileToPrint + ".pdf"));
@@ -182,22 +182,30 @@ public class PrintJob {
 
     private void sendToUM(ExternalCaregiver caregiverToPrint, Path path) {
         ExternalCaregiver caregiverOfLetter = service.findByMnemonic(TxtUtil.getMnemonicAfterUA(path));
-        if(sendToUmJob.formatAndSend(caregiverOfLetter, path)){
-            LOGGER.debug(path + "  verzenden naar UM is gelukt voor dokter die de brief geschreven heeft!");
-        }
-        if (sendToUmJob.formatAndSend(caregiverToPrint, path)) {
-            LOGGER.debug(path + "  verzenden naar UM is gelukt voor dokter in AAN/CC!");
-
-            String externalId = caregiverToPrint.getExternalID();
-            String linkedId = linkedExternalCargiverService.findLinkedIdByExternalId(externalId);
-            if (linkedId != null) {
-                ExternalCaregiver caregiverToSendCopy = service.findByMnemonic(linkedId);
-                if (sendToUmJob.formatAndSend(caregiverToSendCopy, path)) {
-                    LOGGER.debug(path + " copy verzenden naar UM is gelukt!");
-                }
-            }
+        if (caregiverOfLetter == null) {
+            IOUtil.writeFileToError(PATH_TO_ERROR, path, "Deze brief is niet verzonden naar UM: SPECIALIST van Somedi is null. " +
+                    "Geef de specialist een formaat, een nihiiadres en vul in of hij print wilt of niet! De brief is wel goed geprint. " +
+                    "Zoek in result terug naar de pdf en txt en plaats deze in NEW als alle gegevens ingevuld zijn!");
         } else {
-            LOGGER.warn(path + " verzenden naar UM is NIET gelukt!");
+            if (sendToUmJob.formatAndSend(caregiverOfLetter, path)) {
+                LOGGER.debug(path + "  verzenden naar UM is gelukt voor dokter die de brief geschreven heeft!");
+            }
+            if (sendToUmJob.formatAndSend(caregiverToPrint, path)) {
+                LOGGER.debug(path + "  verzenden naar UM is gelukt voor dokter in AAN/CC!");
+
+                String externalId = caregiverToPrint.getExternalID();
+                String linkedId = linkedExternalCargiverService.findLinkedIdByExternalId(externalId);
+                if (linkedId != null) {
+                    ExternalCaregiver caregiverToSendCopy = service.findByMnemonic(linkedId);
+                    if (caregiverToSendCopy != null) {
+                        if (sendToUmJob.formatAndSend(caregiverToSendCopy, path)) {
+                            LOGGER.debug(path + " copy verzenden naar UM is gelukt!");
+                        }
+                    }
+                }
+            } else {
+                LOGGER.warn(path + " verzenden naar UM is NIET gelukt!");
+            }
         }
     }
 

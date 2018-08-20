@@ -50,10 +50,6 @@ public class PrintAppApplication extends Application {
         context.stop();
     }
 
-//    public static void main(String[] args) {
-//        SpringApplication.run(PrintAppApplication.class, args);
-//    }
-
     @Bean
     public static PropertySourcesPlaceholderConfigurer
     propertySourcesPlaceholderConfigurer() {
