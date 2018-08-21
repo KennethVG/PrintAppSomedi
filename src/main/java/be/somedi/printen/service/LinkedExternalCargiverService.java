@@ -7,4 +7,6 @@ public interface LinkedExternalCargiverService {
     LinkedExternalCaregiver findLinkedIdByExternalId(String externalId);
 
     int updateLinkedExternalCaregiver(LinkedExternalCaregiver linkedExternalCaregiver);
+
+    void deleteLinkedExternalCaregiver(LinkedExternalCaregiver linkedExternalCaregiver);
 }

@@ -8,8 +8,8 @@
     /*default font */
     -fx-font-family: "Calibri Light", sans-serif;
     -fx-font-size: 1.3em;
-    -fx-font-weight: 600;
-    -fx-disabled-opacity: 0.6;
+    -fx-font-weight: 600px;
+    -fx-disabled-opacity: 0.6px;
 
     -flatter-red: rgb(237.0, 68.0, 37.0);
     -flatter-blue: rgb(0.0, 184.0, 222.0);

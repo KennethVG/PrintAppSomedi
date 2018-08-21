@@ -36,4 +36,8 @@ public class LinkedExternalCaregiverServiceImpl implements LinkedExternalCargive
         return caregiver != null ? 1 : 0;
     }
 
+    @Override
+    public void deleteLinkedExternalCaregiver(LinkedExternalCaregiver linkedExternalCaregiver) {
+        linkedExternalCargiverRepository.delete(linkedExternalCaregiver);
+    }
 }

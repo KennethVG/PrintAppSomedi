@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.text.TextAlignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -62,7 +63,9 @@ public class ExternalCaregiverViewController {
     private ChoiceBox<String> cbFormaat;
 
     @FXML
-    private Button updateDokter;
+    private Button btnUpdate;
+    @FXML
+    private Button btnVerwijder;
 
 
     @Autowired
@@ -74,6 +77,10 @@ public class ExternalCaregiverViewController {
 
     @FXML
     public void initialize() {
+
+        lblSearchResult.setPrefHeight(85);
+        lblSearchResult.setWrapText(true);
+        lblSearchResult.setTextAlignment(TextAlignment.JUSTIFY);
 
         setVisibility(false);
 
@@ -87,6 +94,7 @@ public class ExternalCaregiverViewController {
 
     @FXML
     private void updateDokter() {
+        txtExternalId.clear();
 
         caregiverToUpdate.setPrintProtocols(cbPrintProtocols.getValue().equals("ja"));
         caregiverToUpdate.seteProtocols(cbEProtocols.getValue().equals("ja"));
@@ -100,7 +108,7 @@ public class ExternalCaregiverViewController {
 
         int kopie = 0;
         if (ec != null) {
-            if(linkedExternalCaregiverToUpdate == null){
+            if (linkedExternalCaregiverToUpdate == null) {
                 linkedExternalCaregiverToUpdate = new LinkedExternalCaregiver();
             }
             linkedExternalCaregiverToUpdate.setExternalId(txtExternalId.getText());
@@ -111,7 +119,7 @@ public class ExternalCaregiverViewController {
         if (result == 1) {
             lblSearchResult.setText("Dokter " + caregiverToUpdate.getLastName() + " is met succes geüpdatet!");
             if (kopie == 1) {
-                lblSearchResult.setText("Dokter " + caregiverToUpdate.getLastName() + " is met succes geüpdatet! en kopie naar andere dokter is in orde!");
+                lblSearchResult.setText("Dokter " + caregiverToUpdate.getLastName() + " is met succes geüpdatet! Kopie naar  Dr. " + ec.getLastName() + " is in orde!");
             }
         } else
             lblSearchResult.setText("Update mislukt!");
@@ -120,6 +128,7 @@ public class ExternalCaregiverViewController {
     @FXML
     private void zoekDokter() {
         String externalId = txtExternalId.getText();
+        String kopie = txtKopie.getText();
         if (externalId == null || externalId.equals(""))
             lblSearchResult.setText("Vul Mnemonic in!");
 
@@ -142,6 +151,24 @@ public class ExternalCaregiverViewController {
         } else {
             lblSearchResult.setText("Deze mnemonic bestaat niet in de Cliniconnect database");
         }
+        if (kopie == null || !kopie.equalsIgnoreCase("")) {
+            btnVerwijder.setDisable(true);
+        }
+    }
+
+    @FXML
+    public void verwijderKopie() {
+        String kopie = txtKopie.getText();
+        if (kopie == null || !kopie.equalsIgnoreCase("")) {
+            LinkedExternalCaregiver linkedExternalCaregiver = new LinkedExternalCaregiver();
+            linkedExternalCaregiver.setLinkedId(kopie);
+            linkedExternalCaregiver.setExternalId(txtExternalId.getText());
+            linkedExternalCargiverService.deleteLinkedExternalCaregiver(linkedExternalCaregiver);
+            lblSearchResult.setText("Kopie naar andere dokter succesvol verwijderd!");
+            txtKopie.clear();
+        } else {
+            lblSearchResult.setText("Deze dokter wenst op dit moment geen kopie.");
+        }
     }
 
     @FXML
@@ -160,7 +187,8 @@ public class ExternalCaregiverViewController {
     }
 
     private void setVisibility(boolean visible) {
-        updateDokter.setVisible(visible);
+        btnUpdate.setVisible(visible);
+        btnVerwijder.setVisible(visible);
 
         lblPrint.setVisible(visible);
         lblEPrint.setVisible(visible);

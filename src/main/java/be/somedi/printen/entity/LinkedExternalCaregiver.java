@@ -1,9 +1,6 @@
 package be.somedi.printen.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -13,6 +10,7 @@ import java.util.Objects;
 public class LinkedExternalCaregiver {
 
     @Id
+    @Column(unique = true)
     private String externalId;
     @Id
     private String linkedId;
