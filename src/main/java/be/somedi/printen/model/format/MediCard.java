@@ -20,7 +20,7 @@ public class MediCard extends BaseFormat {
     }
 
     @Override
-    public String buildDocument() {
+    public String buildDocument(ExternalCaregiver externalCaregiver) {
 
         StringBuilder result = new StringBuilder();
         ExternalCaregiver specialistOfSomedi = getSpecialistOfSomedi();

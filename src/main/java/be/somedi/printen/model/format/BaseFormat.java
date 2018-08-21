@@ -76,9 +76,14 @@ public abstract class BaseFormat {
         this.pathToTxt = pathToTxt;
     }
 
+//    public Path makeRepFile(Path pathToUm, ExternalCaregiver caregiverToSend) {
+//        return IOUtil.writeFileToUM(pathToUm, caregiverToSend.getExternalID(), getRefNr(), "REP", buildDocument());
+//    }
+
     public Path makeRepFile(Path pathToUm, ExternalCaregiver caregiverToSend) {
-        return IOUtil.writeFileToUM(pathToUm, caregiverToSend.getExternalID(), getRefNr(), "REP", buildDocument());
+        return IOUtil.writeFileToUM(pathToUm, caregiverToSend.getExternalID(), getRefNr(), "REP", buildDocument(caregiverToSend));
     }
+
 
     public Path makeAdrFile(Path pathToUm, ExternalCaregiver caregiverToSend) {
         String first8NumbersOfrizivFromCaregiverToSend = StringUtils.left(caregiverToSend.getNihiiAddress() == null || caregiverToSend.getNihiiAddress().equalsIgnoreCase("NULL") ? caregiverToSend.getNihii() : caregiverToSend.getNihiiAddress(), NUMBER_OF_RIZIV);
@@ -94,5 +99,6 @@ public abstract class BaseFormat {
                 .getLastName() + " " + getSpecialistOfSomedi().getFirstName() + "\n";
     }
 
-    public abstract String buildDocument();
+//    public abstract String buildDocument();
+    public abstract String buildDocument(ExternalCaregiver linkedExternalCaregiver);
 }

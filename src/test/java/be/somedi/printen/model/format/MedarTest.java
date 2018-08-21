@@ -33,7 +33,7 @@ public class MedarTest {
 
     @Test
     public void buildDocument() {
-        String fullDoc = medar.buildDocument();
+        String fullDoc = medar.buildDocument(null);
         String date = FormatUtil.formatDate();
         assertEquals("/FROM     : Vantrappen|Prins de Lignestr 1 B0101|3001|Heverlee||1/06979/12/414\n" +
                 "/TO       : Bijdekerke|Schrieksesteenweg 16|2221|Booischot||1/14507/50/004\n" +

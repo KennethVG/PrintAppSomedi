@@ -34,7 +34,7 @@ public class MediCardTest {
     @Test
     public void buildDocument() {
         String date = FormatUtil.formatDate();
-        String fullDoc = mediCard.buildDocument();
+        String fullDoc = mediCard.buildDocument(null);
         assertEquals("PROTO BEGIN\n" +
                 "\n" +
                 "SOMEDI C.V.B.A.\n" +

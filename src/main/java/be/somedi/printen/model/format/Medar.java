@@ -20,14 +20,20 @@ public class Medar extends BaseFormat {
     }
 
     @Override
-    public String buildDocument() {
+    public String buildDocument(ExternalCaregiver externalCaregiver) {
         ExternalCaregiver specialist = getSpecialistOfSomedi();
         ExternalCaregiver toSend = getCaregiverToSendLetter();
 
         String[] specialistIds = {specialist.getLastName(), specialist.getStreetWithNumber(), specialist.getZip(),
                 specialist.getCity(), "", formatRiziv(specialist.getNihii())};
-        String[] specialistToSendIds = {toSend.getLastName(), toSend.getStreetWithNumber(), toSend.getZip(), toSend
-                .getCity(), "", formatRiziv(toSend.getNihii())};
+        String[] specialistToSendIds;
+        if(externalCaregiver != null){
+            specialistToSendIds = new String[]{externalCaregiver.getLastName(), externalCaregiver.getStreetWithNumber(), externalCaregiver.getZip(), externalCaregiver
+                    .getCity(), "", formatRiziv(externalCaregiver.getNihii())};
+        } else {
+            specialistToSendIds = new String[]{toSend.getLastName(), toSend.getStreetWithNumber(), toSend.getZip(), toSend
+                    .getCity(), "", formatRiziv(toSend.getNihii())};
+        }
         String[] patientIds = {getFirstNameAfterPV(getPathToTxt()), getNameAfterPN(getPathToTxt()), getStreetWithNumberAfterPS(getPathToTxt()),
                 getZipCodeAfterPP(getPathToTxt()), getCityAfterPA(getPathToTxt()), formatDate(getBirthDateAtferPD(getPathToTxt()), "yyyyMMdd"),
                 formatGender(getExternalIdAfterPC(getPathToTxt())).name()};

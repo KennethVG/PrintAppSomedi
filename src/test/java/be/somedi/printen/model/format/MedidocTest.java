@@ -34,7 +34,7 @@ public class MedidocTest {
 
     @Test
     public void buildDocument() {
-        String fullDoc = medidoc.buildDocument();
+        String fullDoc = medidoc.buildDocument(null);
         assertEquals("1/06979/12/414\n" +
                 "Vantrappen              Greet\n" +
                 "P.A. Liersesteenweg                267\n" +

@@ -22,14 +22,14 @@ public class Medidoc extends BaseFormat {
     }
 
     @Override
-    public String buildDocument() {
+    public String buildDocument(ExternalCaregiver linkedExternalCaregiver) {
         StringBuilder result = new StringBuilder();
-        long count = countNumberOfLines(buildHeading()) + countNumberOfLines(buildHeadingLetter()) + countNumberOfLines(buildBody());
-        result.append(buildHeading()).append("\n").append(buildHeadingLetter()).append(buildBody()).append("\n").append("#/").append(count);
+        long count = countNumberOfLines(buildHeading(linkedExternalCaregiver)) + countNumberOfLines(buildHeadingLetter()) + countNumberOfLines(buildBody());
+        result.append(buildHeading(linkedExternalCaregiver)).append("\n").append(buildHeadingLetter()).append(buildBody()).append("\n").append("#/").append(count);
         return result.toString();
     }
 
-    private String buildHeading() {
+    private String buildHeading(ExternalCaregiver linkedExternalCaregiver ) {
 
         StringBuilder result = new StringBuilder();
         ExternalCaregiver specialistOfSomedi = getSpecialistOfSomedi();
@@ -55,12 +55,17 @@ public class Medidoc extends BaseFormat {
         result.append(formatDateAndTime(LocalDateTime.now())).append("\n");
 
         //LINE8: Riziv aanvragende arts (Format: C/CCCCC/CC/CCC)
-        result.append(formatRiziv(caregiverToSendLetter.getNihii())).append("\n");
-
-        //LINE9: naam (24 karakters) en voornaam (Max. 16 karakters) aanvragende arts
-        result.append(formatStringWithBlanks(caregiverToSendLetter.getLastName(), 24));
-        result.append(formatStringWithMaxChars(caregiverToSendLetter.getFirstName(), 16));
-
+        if(linkedExternalCaregiver != null){
+            result.append(formatRiziv(linkedExternalCaregiver.getNihii())).append("\n");
+            //LINE9: naam (24 karakters) en voornaam (Max. 16 karakters) aanvragende arts
+            result.append(formatStringWithBlanks(linkedExternalCaregiver.getLastName(), 24));
+            result.append(formatStringWithMaxChars(linkedExternalCaregiver.getFirstName(), 16));
+        } else {
+            result.append(formatRiziv(caregiverToSendLetter.getNihii())).append("\n");
+            //LINE9: naam (24 karakters) en voornaam (Max. 16 karakters) aanvragende arts
+            result.append(formatStringWithBlanks(caregiverToSendLetter.getLastName(), 24));
+            result.append(formatStringWithMaxChars(caregiverToSendLetter.getFirstName(), 16));
+        }
         return result.toString();
     }
 
