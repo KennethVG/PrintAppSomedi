@@ -31,7 +31,11 @@ public class FormatUtil {
     }
 
     public static String formatStringWithMaxChars(String externalCaregiverField, int maxChars) {
+        System.out.println("jgf");
+        System.out.println("jgf");
         return StringUtils.substring(externalCaregiverField, 0, maxChars);
+
+
     }
 
     public static String formatDateAndTime(LocalDateTime ldt) {
